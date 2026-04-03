@@ -29,12 +29,24 @@ export const userLogin = async (
 
     const { token, accessToken, refreshToken } = response.data;
 
+    console.log(response.data);
+
     await setTokenInCookies("accessToken", accessToken);
     await setTokenInCookies("refreshToken", refreshToken);
-    await setTokenInCookies("better-auth.session_token", token);
+    await setTokenInCookies("better-auth.session_token", token, 86400); // 1 day in seconds
 
     redirect("/dashboard");
   } catch (error: any) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "digest" in error &&
+      typeof error.digest === "string" &&
+      error.digest.startsWith("NEXT_REDIRECT")
+    ) {
+      throw error;
+    }
+
     return {
       success: false,
       message: `Login failed: ${error.message || "Unknown error"}`,

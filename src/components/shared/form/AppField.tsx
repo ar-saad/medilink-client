@@ -74,7 +74,11 @@ const AppField = ({
           disabled={disabled}
           aria-invalid={hasError}
           aria-describedby={hasError ? `${field.name}-error` : undefined}
-          className={cn(prepend ? "pl-10" : "", append ? "pr-10" : "")}
+          className={cn(
+            prepend && "pl-10",
+            append && "pr-10",
+            hasError && "border-destructive focus-visible:ring-destructive/20",
+          )}
         />
 
         {append && (
