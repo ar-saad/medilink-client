@@ -80,3 +80,22 @@ export const getDefaultDashboardRoute = (role: UserRole): string => {
     return "/";
   }
 };
+
+export const isValidRedirectForRole = (
+  redirectPath: string,
+  role: UserRole,
+): boolean => {
+  const routeOwner = getRouteOwner(redirectPath);
+  const unifySuperAdminAndAdmin = role === "SUPER_ADMIN" ? "ADMIN" : role;
+  role = unifySuperAdminAndAdmin as UserRole; // Type assertion to satisfy TypeScript
+
+  if (routeOwner === null || routeOwner === "COMMON") {
+    return true; // Allow access to public and common routes
+  }
+
+  if (routeOwner === role) {
+    return true; // Allow access if the route owner matches the user's role
+  }
+
+  return false; // Deny access for all other cases
+};
