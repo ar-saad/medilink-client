@@ -38,3 +38,16 @@ export const setTokenInCookies = async (
 
   await setCookie(name, token, maxAgeInSeconds || fallbackMaxAgeInSeconds);
 };
+
+export const isTokenExpiringSoon = async (
+  token: string,
+  thresholdInSeconds: number = 300,
+): Promise<boolean> => {
+  const remainingSeconds = getTokenSecondsToExpire(token);
+  return remainingSeconds > 0 && remainingSeconds <= thresholdInSeconds;
+};
+
+export const isTokenExpired = async (token: string): Promise<boolean> => {
+  const remainingSeconds = getTokenSecondsToExpire(token);
+  return remainingSeconds === 0;
+};
