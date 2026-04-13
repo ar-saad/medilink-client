@@ -3,10 +3,5 @@ export default function CommonProtectedDashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <>
-      Common Protected Dashboard Layout
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
