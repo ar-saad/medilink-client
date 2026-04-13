@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Medilink Healthcare Management System",
+  title: "MediLink Healthcare Management System",
   description:
-    "A comprehensive healthcare management system built with Next.js, Prisma, and Tailwind CSS. Medilink streamlines patient records, appointments, and billing for efficient healthcare administration.",
+    "A comprehensive healthcare management system built with Next.js, Prisma, and Tailwind CSS. MediLink streamlines patient records, appointments, and billing for efficient healthcare administration.",
 };
 
 export default function RootLayout({
