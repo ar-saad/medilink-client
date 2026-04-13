@@ -9,7 +9,7 @@ const LoginPage = async ({ searchParams }: LoginParams) => {
   const redirectPath = params.redirect;
 
   return (
-    <div>
+    <div className="flex justify-center items-center min-h-screen">
       <LoginForm redirectPath={redirectPath} />
     </div>
   );

@@ -40,7 +40,7 @@ export async function getNewTokensWithRefreshToken(
     }
 
     if (token) {
-      await setTokenInCookies("token", token);
+      await setTokenInCookies("better-auth.session_token", token);
     }
 
     return true;
@@ -54,12 +54,6 @@ export async function getUserInfo() {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
     const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    console.log("----------------------------------");
-    console.log("Timestamp: ", new Date().toISOString());
-    console.log("Access Token from getUserInfo:", accessToken);
-    console.log("Session Token from getUserInfo:", sessionToken);
-    console.log("----------------------------------");
 
     if (!accessToken) {
       return null;

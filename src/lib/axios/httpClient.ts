@@ -14,7 +14,7 @@ async function tryRefreshToken(
   accessToken: string,
   refreshToken: string,
 ): Promise<void> {
-  if (!isTokenExpiringSoon(accessToken)) {
+  if (!(await isTokenExpiringSoon(accessToken, 60))) {
     return;
   }
 
