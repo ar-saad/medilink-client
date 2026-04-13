@@ -29,17 +29,13 @@ const CHART_COLORS = [
   "oklch(0.769 0.188 70.08)", // chart-5 - orange variant
 ];
 
-const AppointmentPieChart = ({
-  data,
-  title,
-  description,
-}: AppointmentPieChartProps) => {
+const AppointmentPieChart = ({ data }: AppointmentPieChartProps) => {
   if (!data || !Array.isArray(data)) {
     return (
-      <Card className="col-span-2">
+      <Card className="col-span-4">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle>Appointment Trends</CardTitle>
+          <CardDescription>Monthly Appointment Statistics</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-75">
           <p className="text-sm text-muted-foreground">
@@ -63,10 +59,10 @@ const AppointmentPieChart = ({
     formattedData.every((item) => item.value === 0)
   ) {
     return (
-      <Card className="col-span-2">
+      <Card className="col-span-4">
         <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
+          <CardTitle>Appointment Trends</CardTitle>
+          <CardDescription>Monthly Appointment Statistics</CardDescription>
         </CardHeader>
 
         <CardContent className="flex items-center justify-center h-75">
@@ -77,12 +73,11 @@ const AppointmentPieChart = ({
       </Card>
     );
   }
-
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-4">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle>Appointment Trends</CardTitle>
+        <CardDescription>Monthly Appointment Statistics</CardDescription>
       </CardHeader>
 
       <CardContent>
