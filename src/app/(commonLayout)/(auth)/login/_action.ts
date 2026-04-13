@@ -40,9 +40,12 @@ export const userLogin = async (
     await setTokenInCookies("refreshToken", refreshToken);
     await setTokenInCookies("better-auth.session_token", token, 86400); // 1 day in seconds
 
-    if (!emailVerified) {
-      redirect("/verify-email");
-    } else if (needPasswordChange) {
+    // Implement in the catch block
+    // if (!emailVerified) {
+    //   redirect("/verify-email");
+    // } else
+
+    if (needPasswordChange) {
       redirect(`/reset-password?email=${email}`);
     } else {
       const targetPath =
@@ -61,6 +64,14 @@ export const userLogin = async (
       error.digest.startsWith("NEXT_REDIRECT")
     ) {
       throw error;
+    }
+
+    if (
+      error &&
+      error.response &&
+      error.response.data.message === "Email not verified"
+    ) {
+      redirect("/verify-email");
     }
 
     return {

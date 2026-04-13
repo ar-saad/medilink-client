@@ -6,7 +6,10 @@ import {
   isAuthRoute,
   UserRole,
 } from "./lib/authUtils";
-import { getNewTokensWithRefreshToken } from "./services/auth.services";
+import {
+  getNewTokensWithRefreshToken,
+  getUserInfo,
+} from "./services/auth.services";
 import { isTokenExpiringSoon } from "./lib/tokenUtils";
 
 async function refreshTokenMiddleware(refreshToken: string): Promise<boolean> {
@@ -83,31 +86,113 @@ export async function proxy(request: NextRequest) {
       return response;
     }
 
-    if (isAuth && isValidAccessToken) {
-      // Rule-1: User is logged in and trying to access an auth route -> Redirect to dashboard
+    // Rule-1: User is logged in and trying to access an auth route -> Redirect to dashboard
+    // Exclude reset-password and verify-email because they are enforced by Rule-5.
+    if (
+      isAuth &&
+      pathname !== "/reset-password" &&
+      pathname !== "/verify-email" &&
+      isValidAccessToken
+    ) {
       return NextResponse.redirect(
         new URL(getDefaultDashboardRoute(userRole as UserRole), request.url),
       );
     }
 
-    // Rule-2: User trying to access public route -> Allow
+    // Rule-2: User trying to access reset-password route
+    if (pathname === "/reset-password") {
+      const email = request.nextUrl.searchParams.get("email");
+
+      // Case-1: Special handling for reset-password route to allow access if user have needPasswordChange flag set. This is required the first time after the user is created by admin and needs to set their password.
+      if (accessToken && email) {
+        const userInfo = await getUserInfo();
+
+        if (userInfo.needPasswordChange) {
+          return NextResponse.next();
+        } else {
+          return NextResponse.redirect(
+            new URL(
+              getDefaultDashboardRoute(userRole as UserRole),
+              request.url,
+            ),
+          );
+        }
+      }
+
+      // Case-2: User coming from forgot-password flow with email query param should be allowed to access reset-password page without any token checks
+      if (email) {
+        return NextResponse.next();
+      }
+
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Rule-3: User trying to access public route -> Allow
     if (routeOwner === null) {
       return NextResponse.next();
     }
 
-    // Rule-3: User is not logged in and trying to access a protected route -> Redirect to login
+    // Rule-4: User is not logged in and trying to access a protected route -> Redirect to login
     if (!accessToken) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    // Rule-4: User trying to access common protected route -> Allow
+    // Rule-5: Enforce the user to stay in reset-password or verify-email page if they have needPasswordChange or isEmailVerified flag set to false respectively
+    if (accessToken) {
+      const userInfo = await getUserInfo();
+      // Case-1: If user have isEmailVerified flag set to false, enforce them to stay on verify-email page until they verify their email
+      if (userInfo.isEmailVerified === false) {
+        if (pathname !== "/verify-email") {
+          const verifyEmailUrl = new URL("/verify-email", request.url);
+          verifyEmailUrl.searchParams.set("email", userInfo.email);
+          return NextResponse.redirect(verifyEmailUrl);
+        }
+      }
+
+      // Case-2: If the user already verified their email and have isEmailVerified flag set to true but is trying to access verify-email page, redirect them to dashboard
+      if (
+        userInfo &&
+        userInfo.isEmailVerified === true &&
+        pathname === "/verify-email"
+      ) {
+        return NextResponse.redirect(
+          new URL(getDefaultDashboardRoute(userRole as UserRole), request.url),
+        );
+      }
+
+      // Case-3: If user have needPasswordChange flag set, enforce them to stay on reset-password page until they change their password
+      if (userInfo.needPasswordChange) {
+        if (pathname !== "/reset-password") {
+          const resetPasswordUrl = new URL("/reset-password", request.url);
+          resetPasswordUrl.searchParams.set("email", userInfo.email);
+          return NextResponse.redirect(resetPasswordUrl);
+        }
+
+        return NextResponse.next();
+      }
+
+      // Case-4: If the user already changed their password and have needPasswordChange flag set to false but is trying to access reset-password page, redirect them to dashboard
+      if (
+        userInfo &&
+        !userInfo.needPasswordChange &&
+        pathname === "/reset-password"
+      ) {
+        return NextResponse.redirect(
+          new URL(getDefaultDashboardRoute(userRole as UserRole), request.url),
+        );
+      }
+    }
+
+    // Rule-6: User trying to access common protected route -> Allow
     if (routeOwner === "COMMON") {
       return NextResponse.next();
     }
 
-    // Rule-5: User trying to visit role based protected route but doesn't have required role -> Redirect to dashboard
+    // Rule-7: User trying to visit role based protected route but doesn't have required role -> Redirect to dashboard
     if (
       routeOwner === "ADMIN" ||
       routeOwner === "DOCTOR" ||
