@@ -151,14 +151,12 @@ export async function proxy(request: NextRequest) {
           verifyEmailUrl.searchParams.set("email", userInfo.email);
           return NextResponse.redirect(verifyEmailUrl);
         }
+
+        return NextResponse.next();
       }
 
       // Case-2: If the user already verified their email and have isEmailVerified flag set to true but is trying to access verify-email page, redirect them to dashboard
-      if (
-        userInfo &&
-        userInfo.isEmailVerified === true &&
-        pathname === "/verify-email"
-      ) {
+      if (userInfo.isEmailVerified && pathname === "/verify-email") {
         return NextResponse.redirect(
           new URL(getDefaultDashboardRoute(userRole as UserRole), request.url),
         );
@@ -176,11 +174,7 @@ export async function proxy(request: NextRequest) {
       }
 
       // Case-4: If the user already changed their password and have needPasswordChange flag set to false but is trying to access reset-password page, redirect them to dashboard
-      if (
-        userInfo &&
-        !userInfo.needPasswordChange &&
-        pathname === "/reset-password"
-      ) {
+      if (!userInfo.needPasswordChange && pathname === "/reset-password") {
         return NextResponse.redirect(
           new URL(getDefaultDashboardRoute(userRole as UserRole), request.url),
         );
