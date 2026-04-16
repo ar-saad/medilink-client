@@ -1,6 +1,7 @@
 import DateCell from "@/components/shared/cell/DateCell";
 import StatusBadgeCell from "@/components/shared/cell/StatusBadgeCell";
 import UserInfoCell from "@/components/shared/cell/UserInfoCell";
+import { Badge } from "@/components/ui/badge";
 import { TDoctor } from "@/types/doctor.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Star } from "lucide-react";
@@ -18,6 +19,33 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
         profilePhoto={row.original.profilePhoto}
       />
     ),
+  },
+  {
+    id: "specialties",
+    accessorKey: "specialties",
+    header: "Specialties",
+    cell: ({ row }) => {
+      const specialties = row.original.specialties;
+
+      if (!specialties || specialties.length === 0) {
+        return (
+          <span className="text-xs text-muted-foreground">No Specialties</span>
+        );
+      }
+
+      return (
+        <div>
+          {specialties.map(({ specialty }, id) => {
+            const title = specialty.title || "N/A";
+            return (
+              <Badge variant={"secondary"} key={id}>
+                {title}
+              </Badge>
+            );
+          })}
+        </div>
+      );
+    },
   },
   {
     id: "contactNumber",
