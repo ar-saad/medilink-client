@@ -1,3 +1,5 @@
+import DateCell from "@/components/shared/cell/DateCell";
+import UserInfoCell from "@/components/shared/cell/UserInfoCell";
 import { TDoctor } from "@/types/doctor.types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Star } from "lucide-react";
@@ -8,6 +10,13 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
     id: "name",
     accessorKey: "name",
     header: "Doctor",
+    cell: ({ row }) => (
+      <UserInfoCell
+        name={row.original.name}
+        email={row.original.email}
+        profilePhoto={row.original.profilePhoto}
+      />
+    ),
   },
   {
     id: "contactNumber",
@@ -15,9 +24,7 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
     header: "Contact Number",
     cell: ({ row }) => (
       <div className="flex flex-col">
-        <span className="text-sm">
-          {row.original?.contactNumber || "Not available"}
-        </span>
+        <span className="text-sm">{row.original?.contactNumber || "N/A"}</span>
       </div>
     ),
   },
@@ -40,7 +47,7 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
     cell: ({ row }) => {
       return (
         <span className="text-sm font-semibold text-green-600">
-          ৳{row.original?.appointmentFee.toFixed(2) ?? "N/A"}
+          ${row.original?.appointmentFee.toFixed(2) ?? "N/A"}
         </span>
       );
     },
@@ -78,7 +85,7 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
     header: "Joined On",
     cell: ({ row }) => {
       return (
-        <span className="text-sm capitalize">{row.original.createdAt}</span>
+        <DateCell date={row.original.createdAt} formatString="MMM dd, yyyy" />
       );
     },
   },

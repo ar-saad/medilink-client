@@ -25,7 +25,7 @@ export type TDoctor = {
   currentWorkingPlace: string;
   designation: string;
   averageRating: number;
-  createdAt: string;
+  createdAt: Date;
   user: {
     status: UserStatus;
   };
