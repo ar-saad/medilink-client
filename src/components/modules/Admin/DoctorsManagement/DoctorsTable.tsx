@@ -6,10 +6,16 @@ import { TDoctor } from "@/types/doctor.types";
 import { useQuery } from "@tanstack/react-query";
 import { doctorColumns } from "./doctorsColumns";
 
-const DoctorsTable = () => {
+const DoctorsTable = ({
+  queryParamsObject,
+  queryString,
+}: {
+  queryParamsObject: { [key: string]: string | string[] | undefined };
+  queryString: string;
+}) => {
   const { data: doctorDataResponse, isLoading } = useQuery({
-    queryKey: ["doctors"],
-    queryFn: getDoctors,
+    queryKey: ["doctors", queryParamsObject],
+    queryFn: () => getDoctors(queryString),
   });
 
   const { data: doctors } = doctorDataResponse! || [];
