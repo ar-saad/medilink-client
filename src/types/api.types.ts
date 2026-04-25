@@ -1,5 +1,5 @@
 export type ApiResponse<TData = unknown> = {
-  success: boolean;
+  success: true;
   message: string;
   data: TData;
   meta?: PaginationMeta;
@@ -13,6 +13,6 @@ export type PaginationMeta = {
 };
 
 export type ApiErrorResponse = {
-  success: boolean;
+  success: false;
   message: string;
 };

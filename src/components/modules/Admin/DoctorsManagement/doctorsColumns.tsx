@@ -23,6 +23,7 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
   {
     id: "specialties",
     accessorKey: "specialties",
+    enableSorting: false,
     header: "Specialties",
     cell: ({ row }) => {
       const specialties = row.original.specialties;
@@ -76,7 +77,7 @@ export const doctorColumns: ColumnDef<TDoctor>[] = [
     cell: ({ row }) => {
       return (
         <span className="text-sm font-semibold text-green-600">
-          ৳{row.original?.appointmentFee.toFixed(2) ?? "N/A"}
+          ${row.original?.appointmentFee.toFixed(2) ?? "N/A"}
         </span>
       );
     },

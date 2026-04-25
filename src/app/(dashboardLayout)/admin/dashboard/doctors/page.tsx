@@ -1,5 +1,5 @@
 import DoctorsTable from "@/components/modules/Admin/DoctorsManagement/DoctorsTable";
-import { getDoctors } from "@/services/doctor.services";
+import { getAllSpecialties, getDoctors } from "@/services/doctor.services";
 import {
   dehydrate,
   HydrationBoundary,
@@ -11,34 +11,45 @@ const DoctorsManagementPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const queryParamsObject = await searchParams;
+  const queryParamsObjects = await searchParams;
 
-  // If the value is an array, we need to convert it to multiple identical key-value pairs in the query string
-  const queryString = Object.keys(queryParamsObject)
+  const queryString = Object.keys(queryParamsObjects)
     .map((key) => {
-      const value = queryParamsObject[key];
-      if (Array.isArray(value)) {
-        return value.map((v) => `${key}=${v}`).join("&");
+      const value = queryParamsObjects[key];
+      if (value === undefined) {
+        return "";
       }
-      return `${key}=${value}`;
+
+      if (Array.isArray(value)) {
+        return value
+          .map((v) => `${encodeURIComponent(key)}=${encodeURIComponent(v)}`)
+          .join("&");
+      }
+
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
     })
+    .filter(Boolean)
     .join("&");
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["doctors", queryParamsObject],
+    queryKey: ["doctors", queryString],
     queryFn: () => getDoctors(queryString),
     staleTime: 1000 * 60 * 60, // 1 hour
-    gcTime: 1000 * 60 * 60 * 6, // 1 hour
+    gcTime: 1000 * 60 * 60 * 6, // 6 hours
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["specialties"],
+    queryFn: () => getAllSpecialties(),
+    staleTime: 1000 * 60 * 60 * 6, // 6 hours
+    gcTime: 1000 * 60 * 60 * 24, // 24 hours
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <DoctorsTable
-        queryParamsObject={queryParamsObject}
-        queryString={queryString}
-      />
+      <DoctorsTable initialQueryString={queryString} />
     </HydrationBoundary>
   );
 };
