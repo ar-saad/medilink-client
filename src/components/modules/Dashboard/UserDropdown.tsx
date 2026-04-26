@@ -1,3 +1,6 @@
+"use client";
+
+import { logoutUserAction } from "@/app/(dashboardLayout)/(commonProtectedLayout)/_action";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,12 +13,33 @@ import {
 import { UserInfo } from "@/types/user.types";
 import { Key, LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
 
 interface UserDropdownProps {
   userInfo: UserInfo;
 }
 
 const UserDropdown = ({ userInfo }: UserDropdownProps) => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      const result = await logoutUserAction();
+
+      if (!result.success) {
+        toast.error(result.message || "Failed to logout user");
+        return;
+      }
+
+      toast.success(result.message || "User logged out successfully");
+      router.replace("/login");
+      router.refresh();
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -58,11 +82,12 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          onClick={() => {}}
+          onClick={handleLogout}
+          disabled={isPending}
           className="cursor-pointer text-red-600"
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Logout
+          {isPending ? "Logging out..." : "Logout"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

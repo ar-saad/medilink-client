@@ -1,5 +1,6 @@
 "use server";
 
+import { deleteCookie } from "@/lib/cookieUtils";
 import { setTokenInCookies } from "@/lib/tokenUtils";
 import { cookies } from "next/headers";
 
@@ -79,4 +80,49 @@ export async function getUserInfo() {
     console.error("Error in getUserInfo:", error);
     return null;
   }
+}
+
+export async function logoutUserFromCurrentSession() {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
+  const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+
+  const cookieSegments: string[] = [];
+
+  if (accessToken) {
+    cookieSegments.push(`accessToken=${accessToken}`);
+  }
+
+  if (refreshToken) {
+    cookieSegments.push(`refreshToken=${refreshToken}`);
+  }
+
+  if (sessionToken) {
+    cookieSegments.push(`better-auth.session_token=${sessionToken}`);
+  }
+
+  try {
+    await fetch(`${API_BASE_URL}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(cookieSegments.length > 0
+          ? { Cookie: cookieSegments.join("; ") }
+          : {}),
+      },
+    });
+  } catch (error) {
+    console.error("Error logging out current user:", error);
+  } finally {
+    await deleteCookie("accessToken");
+    await deleteCookie("refreshToken");
+    await deleteCookie("better-auth.session_token");
+  }
+
+  return {
+    success: true,
+    message: "User logged out successfully",
+    data: null,
+  };
 }
