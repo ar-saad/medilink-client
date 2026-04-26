@@ -1,3 +1,4 @@
+import BookAppointmentModal from "@/components/modules/Patient/Appointments/BookAppointmentModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -161,6 +162,15 @@ const ConsultationDoctorByIdPage = async ({
               <Badge variant="outline">
                 Rating: {doctorDetails.averageRating?.toFixed(1) ?? "0.0"}
               </Badge>
+            </div>
+
+            <div className="pt-3">
+              <BookAppointmentModal
+                doctorId={String(doctorDetails.id)}
+                doctorName={doctorDetails.name}
+                isAuthenticated={Boolean(currentUser)}
+                viewerRole={currentUser?.role ?? null}
+              />
             </div>
           </div>
         </div>

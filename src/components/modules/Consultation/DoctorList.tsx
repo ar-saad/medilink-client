@@ -5,6 +5,7 @@ import DataTableFilters, {
   DataTableFilterValues,
 } from "@/components/shared/table/DataTableFilters";
 import DataTableSearch from "@/components/shared/table/DataTableSearch";
+import BookAppointmentModal from "@/components/modules/Patient/Appointments/BookAppointmentModal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -404,6 +405,14 @@ const DoctorsList = ({
                   </div>
 
                   <div className="mt-auto grid gap-2 pt-5 sm:grid-cols-2">
+                    <BookAppointmentModal
+                      doctorId={String(doctor.id)}
+                      doctorName={doctor.name}
+                      isAuthenticated={isAuthenticated}
+                      viewerRole={viewerRole}
+                      triggerClassName="w-full"
+                      fullWidth
+                    />
                     <Button asChild className="w-full">
                       <Link href={`/consultation/doctor/${doctor.id}`}>
                         View Details
