@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { TDoctorDetails, TDoctorScheduleItem } from "@/types/doctor.types";
+import {
+  type TDoctorDetails,
+  type TDoctorScheduleItem,
+} from "@/types/doctor.types";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarPlus, Clock3, Loader2 } from "lucide-react";
@@ -107,7 +110,7 @@ const BookAppointmentModal = ({
       return;
     }
 
-    const targetPath = `/dashboard/book-appointments?doctorId=${encodeURIComponent(doctorId)}&scheduleId=${encodeURIComponent(selectedScheduleId)}`;
+    const targetPath = `/dashboard/book-appointment?doctorId=${encodeURIComponent(doctorId)}&scheduleId=${encodeURIComponent(selectedScheduleId)}`;
 
     if (!isAuthenticated) {
       setOpen(false);

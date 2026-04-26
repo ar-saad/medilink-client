@@ -145,7 +145,7 @@ export const patientNavItems: NavSection[] = [
       },
       {
         title: "Book Appointment",
-        href: "/dashboard/book-appointments",
+        href: "/dashboard/book-appointment",
         icon: "ClipboardList",
       },
     ],

@@ -28,6 +28,7 @@ async function refreshTokenMiddleware(refreshToken: string): Promise<boolean> {
 export async function proxy(request: NextRequest) {
   try {
     const { pathname } = request.nextUrl;
+    const pathWithQuery = `${pathname}${request.nextUrl.search}`;
     const accessToken = request.cookies.get("accessToken")?.value;
     const refreshToken = request.cookies.get("refreshToken")?.value;
     const accessTokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
@@ -187,7 +188,7 @@ export async function proxy(request: NextRequest) {
 
         if (!userInfo) {
           const loginUrl = new URL("/login", request.url);
-          loginUrl.searchParams.set("redirect", pathname);
+          loginUrl.searchParams.set("redirect", pathWithQuery);
           return NextResponse.redirect(loginUrl);
         }
 
@@ -209,7 +210,7 @@ export async function proxy(request: NextRequest) {
       }
 
       const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", pathname);
+      loginUrl.searchParams.set("redirect", pathWithQuery);
       return NextResponse.redirect(loginUrl);
     }
 
