@@ -2,19 +2,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { AnyFieldApi } from "@tanstack/react-form";
+import React from "react";
 
 const getErrorMessage = (error: unknown): string => {
-  if (typeof error === "string") {
-    return error;
-  }
+  if (typeof error === "string") return error;
 
-  if (
-    error &&
-    typeof error === "object" &&
-    "message" in error &&
-    typeof error.message === "string"
-  ) {
-    return error.message;
+  if (error && typeof error === "object") {
+    if ("message" in error && typeof error.message === "string") {
+      return error.message;
+    }
   }
 
   return String(error);
@@ -23,7 +19,7 @@ const getErrorMessage = (error: unknown): string => {
 type AppFieldProps = {
   field: AnyFieldApi;
   label: string;
-  type?: "text" | "email" | "password" | "number";
+  type?: "text" | "email" | "password" | "number" | "date" | "time";
   placeholder?: string;
   append?: React.ReactNode;
   prepend?: React.ReactNode;
@@ -56,6 +52,7 @@ const AppField = ({
       >
         {label}
       </Label>
+
       <div className="relative">
         {prepend && (
           <div className="absolute inset-y-0 left-0 items-center pl-3 pointer-events-none z-10">

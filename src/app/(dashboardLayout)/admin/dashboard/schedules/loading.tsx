@@ -1,3 +1,4 @@
-export default function SchedulesManagementPageLoading() {
-  return <p>Loading schedules...</p>;
+export default function AdminsSchedulesManagementLoading() {
+  // Or a custom loading skeleton component
+  return <p>Loading Admins Schedules Management...</p>;
 }
