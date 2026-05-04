@@ -9,13 +9,12 @@ import Link from "next/link";
 import Image from "next/image";
 
 const SpecialtiesSection = () => {
-  const { data: specialties, isLoading } = useQuery({
+  const { data: specialtiesResponse, isLoading } = useQuery({
     queryKey: ["specialties"],
-    queryFn: async () => {
-      const response = await getAllSpecialties();
-      return response.data as TSpecialty[];
-    },
+    queryFn: getAllSpecialties,
   });
+
+  const specialties = specialtiesResponse?.data;
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background">
@@ -44,7 +43,7 @@ const SpecialtiesSection = () => {
                 className="group"
               >
                 <Card className="h-full border-none bg-muted/30 transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:-translate-y-1">
-                  <CardContent className="flex flex-col items-center justify-center p-6 text-center space-y-4">
+                  <CardContent className="flex flex-col items-center justify-center p-5 text-center space-y-4">
                     <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-background p-2 group-hover:bg-white/20">
                       {specialty.icon ? (
                         <Image

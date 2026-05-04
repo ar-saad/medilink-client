@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Star, MapPin, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 
 const TopDoctorsSection = () => {
   const { data: doctors, isLoading } = useQuery({
@@ -56,20 +56,23 @@ const TopDoctorsSection = () => {
             {doctors?.map((doctor) => (
               <Card
                 key={doctor.id}
-                className="group overflow-hidden border-none bg-muted/30 transition-all hover:shadow-2xl hover:-translate-y-2"
+                className="group overflow-hidden border-none bg-muted/30 transition-all hover:shadow-2xl hover:-translate-y-2 py-0"
               >
                 <CardHeader className="p-0">
-                  <div className="relative aspect-4/5 overflow-hidden">
-                    <Avatar className="h-full w-full rounded-none">
-                      <AvatarImage
+                  <div className="relative aspect-4/5 overflow-hidden bg-muted">
+                    {doctor.profilePhoto ? (
+                      <Image
                         src={doctor.profilePhoto}
+                        alt={doctor.name}
+                        fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                       />
-                      <AvatarFallback className="text-4xl bg-primary/5 text-primary rounded-none">
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-6xl font-bold bg-primary/5 text-primary/20">
                         {doctor.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="absolute top-4 right-4 rounded-full bg-background/80 px-2 py-1 text-xs font-bold text-primary backdrop-blur-md shadow-sm">
+                      </div>
+                    )}
+                    <div className="absolute top-4 right-4 rounded-full bg-background/80 px-2 py-1 text-xs font-bold text-primary backdrop-blur-md shadow-sm z-10">
                       <div className="flex items-center gap-1">
                         <Star className="h-3 w-3 fill-primary text-primary" />
                         {doctor.averageRating || "4.8"}
@@ -77,9 +80,9 @@ const TopDoctorsSection = () => {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-6 space-y-4">
+                <CardContent className="p-5 py-2 space-y-4">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+                    <h3 className="text-lg font-bold group-hover:text-primary transition-colors line-clamp-1">
                       {doctor.name}
                     </h3>
                     <p className="text-sm font-medium text-primary">
@@ -94,13 +97,15 @@ const TopDoctorsSection = () => {
 
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4 text-primary" />
-                    <span>{doctor.address || "City Medical Center"}</span>
+                    <span className="line-clamp-1">
+                      {doctor.address || "City Medical Center"}
+                    </span>
                   </div>
                 </CardContent>
-                <CardFooter className="p-6 pt-0">
+                <CardFooter className="p-5 pt-0">
                   <Button
-                    className="w-full font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all"
-                    variant="secondary"
+                    className="w-full font-bold shadow-md transition-all hover:shadow-lg"
+                    variant="default"
                     asChild
                   >
                     <Link href={`/consultation/${doctor.id}`}>

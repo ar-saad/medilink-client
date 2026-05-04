@@ -18,23 +18,24 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ user }: ProfileFormProps) => {
   const queryClient = useQueryClient();
-  const [preview, setPreview] = useState<string | null>(user.profilePhoto || null);
   const role = user.role;
   const profile = role === "PATIENT" ? user.patient : role === "DOCTOR" ? user.doctor : user.admin;
+  const [preview, setPreview] = useState<string | null>(profile?.profilePhoto || user.image || null);
 
   const updateMutation = useMutation({
     mutationFn: async (data: any) => {
+      const formData = new FormData();
+      formData.append("data", JSON.stringify(data.payload));
+      if (data.file) {
+        formData.append("profilePhoto", data.file);
+      }
+
       if (role === "PATIENT") {
-        const formData = new FormData();
-        formData.append("data", JSON.stringify(data.payload));
-        if (data.file) {
-          formData.append("profilePhoto", data.file);
-        }
         return updatePatientProfile(formData);
       } else if (role === "DOCTOR") {
-        return updateDoctorProfile(profile.id, data.payload);
+        return updateDoctorProfile(profile.id, formData);
       } else {
-        return updateAdminProfile(profile.id, data.payload);
+        return updateAdminProfile(profile.id, formData);
       }
     },
     onSuccess: () => {
@@ -108,12 +109,10 @@ const ProfileForm = ({ user }: ProfileFormProps) => {
                   {user.name?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {role === "PATIENT" && (
-                <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-                  <Camera className="h-8 w-8" />
-                  <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                </label>
-              )}
+              <label className="absolute inset-0 flex items-center justify-center bg-black/40 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                <Camera className="h-8 w-8" />
+                <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+              </label>
             </div>
             <div className="text-center">
               <h3 className="font-bold text-xl">{user.name}</h3>

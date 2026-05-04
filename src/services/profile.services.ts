@@ -25,18 +25,26 @@ export const updatePatientProfile = async (formData: FormData) => {
   }
 };
 
-export const updateDoctorProfile = async (id: string, payload: any) => {
+export const updateDoctorProfile = async (id: string, formData: FormData) => {
   try {
-    return await httpClient.patch<any>(`/doctors/${id}`, payload);
+    return await httpClient.patch<any>(`/doctors/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   } catch (error) {
     console.log("Error updating doctor profile:", error);
     throw error;
   }
 };
 
-export const updateAdminProfile = async (id: string, payload: any) => {
+export const updateAdminProfile = async (id: string, formData: FormData) => {
   try {
-    return await httpClient.patch<any>(`/admins/${id}`, payload);
+    return await httpClient.patch<any>(`/admins/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   } catch (error) {
     console.log("Error updating admin profile:", error);
     throw error;

@@ -47,9 +47,9 @@ const HowItWorksSection = () => {
               const Icon = step.icon;
               return (
                 <div key={index} className="flex flex-col items-center text-center space-y-6 group">
-                  <div className={`size-16 rounded-2xl ${step.color} text-white flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                  <div className={`relative size-16 rounded-2xl ${step.color} text-white flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                     <Icon className="size-8" />
-                    <div className="absolute -top-2 -right-2 size-6 rounded-full bg-white text-black text-[10px] font-bold flex items-center justify-center border-2 border-muted shadow-sm">
+                    <div className="absolute -top-2 -right-2 size-7 rounded-full bg-white text-primary text-xs font-black flex items-center justify-center shadow-md ring-4 ring-background group-hover:bg-primary group-hover:text-white transition-colors duration-300">
                         {index + 1}
                     </div>
                   </div>

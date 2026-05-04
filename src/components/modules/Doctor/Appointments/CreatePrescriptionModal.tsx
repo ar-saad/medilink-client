@@ -57,7 +57,7 @@ const CreatePrescriptionModal = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle>Create Prescription</DialogTitle>
         </DialogHeader>
@@ -111,10 +111,7 @@ const CreatePrescriptionModal = ({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={prescriptionMutation.isPending}
-            >
+            <Button type="submit" disabled={prescriptionMutation.isPending}>
               {prescriptionMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
