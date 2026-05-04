@@ -6,3 +6,5 @@ export interface UserInfo {
   email: string;
   role: UserRole;
 }
+
+export type TUser = UserInfo;

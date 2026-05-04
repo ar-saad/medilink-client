@@ -67,3 +67,27 @@ export const getMySingleAppointment = async (appointmentId: string) => {
     throw error;
   }
 };
+
+export const changeAppointmentStatus = async (
+  appointmentId: string,
+  status: string,
+) => {
+  try {
+    return await httpClient.patch<TAppointment>(
+      `/appointments/change-appointment-status/${appointmentId}`,
+      { status },
+    );
+  } catch (error) {
+    console.log("Error changing appointment status:", error);
+    throw error;
+  }
+};
+
+export const getAllAppointments = async () => {
+  try {
+    return await httpClient.get<TAppointment[]>("/appointments/all-appointments");
+  } catch (error) {
+    console.log("Error fetching all appointments:", error);
+    throw error;
+  }
+};
