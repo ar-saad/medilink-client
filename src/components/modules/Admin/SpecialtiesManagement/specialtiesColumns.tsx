@@ -39,7 +39,10 @@ export const specialtiesColumns: ColumnDef<TSpecialty>[] = [
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => (
-      <DateCell date={row.original.createdAt} formatString="MMM dd, yyyy" />
+      <DateCell
+        date={row.original.createdAt ?? ""}
+        formatString="MMM dd, yyyy"
+      />
     ),
   },
 ];

@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { LogOut, User, LayoutDashboard, Settings } from "lucide-react";
 import { getDefaultDashboardRoute } from "@/lib/authUtils";
+import ThemeToggle from "@/components/shared/ThemeToggle";
 
 const publicNavLinks = [
   { href: "/consultation", label: "Doctors" },
@@ -96,6 +97,7 @@ const CommonNavbar = () => {
         </nav>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
