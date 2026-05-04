@@ -79,7 +79,6 @@ const getSanitizedConsultationQueryString = (queryString: string) => {
   return sanitizedParams.toString();
 };
 
-
 const Pagination = ({
   currentPage,
   totalPages,
@@ -252,14 +251,15 @@ const DoctorsList = ({
             Consult With Our Specialists
           </h1>
           <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
-            Discover trusted doctors, compare experience and fees, and find the right specialist for your health needs.
+            Discover trusted doctors, compare experience and fees, and find the
+            right specialist for your health needs.
           </p>
         </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar - Filters */}
-        <aside className="w-full lg:w-64 flex-shrink-0">
+        <aside className="w-full lg:w-64 shrink-0">
           <div className="sticky top-24 space-y-6">
             <FilterSidebar
               filters={filterConfigs}
@@ -286,7 +286,9 @@ const DoctorsList = ({
             </div>
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <span className="text-sm font-medium whitespace-nowrap">Sort by:</span>
+              <span className="text-sm font-medium whitespace-nowrap">
+                Sort by:
+              </span>
               <Select
                 value={
                   optimisticSortingState[0]?.id
@@ -304,14 +306,23 @@ const DoctorsList = ({
                   ]);
                 }}
               >
-                <SelectTrigger className="w-full sm:w-48 h-10" disabled={isBusy}>
+                <SelectTrigger
+                  className="w-full sm:w-48 h-10"
+                  disabled={isBusy}
+                >
                   <SelectValue placeholder="Sort doctors" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="averageRating:desc">Rating (High to Low)</SelectItem>
-                  <SelectItem value="appointmentFee:asc">Fee (Low to High)</SelectItem>
-                  <SelectItem value="experience:desc">Experience (High to Low)</SelectItem>
+                  <SelectItem value="averageRating:desc">
+                    Rating (High to Low)
+                  </SelectItem>
+                  <SelectItem value="appointmentFee:asc">
+                    Fee (Low to High)
+                  </SelectItem>
+                  <SelectItem value="experience:desc">
+                    Experience (High to Low)
+                  </SelectItem>
                   <SelectItem value="createdAt:desc">Newest</SelectItem>
                 </SelectContent>
               </Select>
@@ -321,7 +332,10 @@ const DoctorsList = ({
           {isBusy && (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="h-64 rounded-2xl border bg-muted animate-pulse" />
+                <div
+                  key={i}
+                  className="h-64 rounded-2xl border bg-muted animate-pulse"
+                />
               ))}
             </div>
           )}
@@ -329,13 +343,17 @@ const DoctorsList = ({
           {!isBusy && doctors.length === 0 && (
             <div className="flex flex-col items-center justify-center py-20 rounded-2xl border bg-card text-center space-y-4">
               <div className="size-16 rounded-full bg-muted flex items-center justify-center">
-                 <X className="size-8 text-muted-foreground" />
+                <X className="size-8 text-muted-foreground" />
               </div>
               <div className="space-y-1">
                 <p className="text-lg font-medium">No doctors found</p>
-                <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms.</p>
+                <p className="text-sm text-muted-foreground">
+                  Try adjusting your filters or search terms.
+                </p>
               </div>
-              <Button variant="outline" onClick={clearAllFilters}>Clear all filters</Button>
+              <Button variant="outline" onClick={clearAllFilters}>
+                Clear all filters
+              </Button>
             </div>
           )}
 
@@ -365,7 +383,8 @@ const DoctorsList = ({
                   }}
                 />
                 <p className="text-center text-sm text-muted-foreground">
-                  Showing {doctors.length} of {meta?.total ?? doctors.length} doctors
+                  Showing {doctors.length} of {meta?.total ?? doctors.length}{" "}
+                  doctors
                 </p>
               </div>
             </>

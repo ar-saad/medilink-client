@@ -3,7 +3,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getDoctors } from "@/services/doctor.services";
 import { TDoctor } from "@/types/doctor.types";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Star, MapPin, Calendar, ArrowRight } from "lucide-react";
@@ -28,7 +33,8 @@ const TopDoctorsSection = () => {
               Meet Our Expert Doctors
             </h2>
             <p className="max-w-2xl text-muted-foreground">
-              Our specialists are highly qualified and experienced professionals committed to providing the highest standard of healthcare.
+              Our specialists are highly qualified and experienced professionals
+              committed to providing the highest standard of healthcare.
             </p>
           </div>
           <Button variant="outline" asChild className="hidden md:flex">
@@ -48,11 +54,17 @@ const TopDoctorsSection = () => {
         ) : (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {doctors?.map((doctor) => (
-              <Card key={doctor.id} className="group overflow-hidden border-none bg-muted/30 transition-all hover:shadow-2xl hover:-translate-y-2">
+              <Card
+                key={doctor.id}
+                className="group overflow-hidden border-none bg-muted/30 transition-all hover:shadow-2xl hover:-translate-y-2"
+              >
                 <CardHeader className="p-0">
-                  <div className="relative aspect-[4/5] overflow-hidden">
+                  <div className="relative aspect-4/5 overflow-hidden">
                     <Avatar className="h-full w-full rounded-none">
-                      <AvatarImage src={doctor.profilePhoto} className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                      <AvatarImage
+                        src={doctor.profilePhoto}
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
                       <AvatarFallback className="text-4xl bg-primary/5 text-primary rounded-none">
                         {doctor.name.charAt(0)}
                       </AvatarFallback>
@@ -74,20 +86,26 @@ const TopDoctorsSection = () => {
                       {doctor.designation || "Senior Specialist"}
                     </p>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4 text-primary" />
                     <span>{doctor.experience || 5}+ Years Experience</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4 text-primary" />
                     <span>{doctor.address || "City Medical Center"}</span>
                   </div>
                 </CardContent>
                 <CardFooter className="p-6 pt-0">
-                  <Button className="w-full font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all" variant="secondary" asChild>
-                    <Link href={`/consultation/${doctor.id}`}>View Profile</Link>
+                  <Button
+                    className="w-full font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all"
+                    variant="secondary"
+                    asChild
+                  >
+                    <Link href={`/consultation/${doctor.id}`}>
+                      View Profile
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>

@@ -12,7 +12,7 @@ const NewsletterSection = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    
+
     // Simulate API call
     toast.success("Subscribed successfully! Welcome to MediLink.");
     setEmail("");
@@ -30,12 +30,17 @@ const NewsletterSection = () => {
               Stay Updated with MediLink
             </h2>
             <p className="text-lg text-primary-foreground/80 leading-relaxed">
-              Get the latest health tips, medical news, and platform updates delivered straight to your inbox. Join over 10,000+ subscribers today.
+              Get the latest health tips, medical news, and platform updates
+              delivered straight to your inbox. Join over 10,000+ subscribers
+              today.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row">
-            <div className="relative flex-grow">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row"
+          >
+            <div className="relative grow">
               <Input
                 type="email"
                 placeholder="Enter your email"
@@ -45,7 +50,11 @@ const NewsletterSection = () => {
                 required
               />
             </div>
-            <Button size="lg" type="submit" className="h-14 bg-white text-primary hover:bg-white/90 font-bold px-8 rounded-xl shrink-0">
+            <Button
+              size="lg"
+              type="submit"
+              className="h-14 bg-white text-primary hover:bg-white/90 font-bold px-8 rounded-xl shrink-0"
+            >
               Subscribe Now
               <Send className="ml-2 h-5 w-5" />
             </Button>
