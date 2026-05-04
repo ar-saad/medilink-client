@@ -190,6 +190,50 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
           </svg>
           Sign in with Google
         </Button>
+
+        <div className="mt-8 pt-6 border-t">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4 text-center">
+            Demo Accounts (Quick Access)
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              className="text-[11px] h-8"
+              onClick={() => {
+                form.setFieldValue("email", "admin@medilink.com");
+                form.setFieldValue("password", "admin123");
+                setTimeout(() => form.handleSubmit(), 100);
+              }}
+            >
+              Admin Demo
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="text-[11px] h-8"
+              onClick={() => {
+                form.setFieldValue("email", "doctor@medilink.com");
+                form.setFieldValue("password", "doctor123");
+                setTimeout(() => form.handleSubmit(), 100);
+              }}
+            >
+              Doctor Demo
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="text-[11px] h-8"
+              onClick={() => {
+                form.setFieldValue("email", "patient@medilink.com");
+                form.setFieldValue("password", "patient123");
+                setTimeout(() => form.handleSubmit(), 100);
+              }}
+            >
+              Patient Demo
+            </Button>
+          </div>
+        </div>
       </CardContent>
 
       <CardFooter className="justify-center border-t pt-4">

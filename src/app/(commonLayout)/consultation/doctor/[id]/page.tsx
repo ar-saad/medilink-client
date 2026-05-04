@@ -5,39 +5,25 @@ import { Button } from "@/components/ui/button";
 import { getUserInfo } from "@/services/auth.services";
 import { getDoctorById } from "@/services/doctor.services";
 import { TDoctorDetails } from "@/types/doctor.types";
-import { format } from "date-fns";
 import Link from "next/link";
-
-const formatDateTime = (value?: string | Date | null) => {
-  if (!value) {
-    return "N/A";
-  }
-
-  const dateValue = new Date(value);
-  if (Number.isNaN(dateValue.getTime())) {
-    return "N/A";
-  }
-
-  return format(dateValue, "MMM dd, yyyy hh:mm a");
-};
+import {
+  ChevronLeft,
+  GraduationCap,
+  MapPin,
+  Star,
+  Briefcase,
+} from "lucide-react";
+import DoctorDetailsTabs from "@/components/modules/Consultation/DoctorDetailsTabs";
+import RelatedDoctors from "@/components/modules/Consultation/RelatedDoctors";
 
 const getInitials = (name?: string) => {
-  if (!name) {
-    return "DR";
-  }
-
+  if (!name) return "DR";
   return name
     .trim()
     .split(/\s+/)
     .slice(0, 2)
     .map((item) => item[0]?.toUpperCase() ?? "")
     .join("");
-};
-
-const getTodayStart = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
 };
 
 const ConsultationDoctorByIdPage = async ({
@@ -54,243 +40,191 @@ const ConsultationDoctorByIdPage = async ({
   try {
     const response = await getDoctorById(id);
     doctorDetails = response.data;
-  } catch (error) {
-    if (
-      error &&
-      typeof error === "object" &&
-      "response" in error &&
-      error.response &&
-      typeof error.response === "object" &&
-      "data" in error.response &&
-      error.response.data &&
-      typeof error.response.data === "object" &&
-      "message" in error.response.data &&
-      typeof error.response.data.message === "string"
-    ) {
-      errorMessage = error.response.data.message;
-    } else {
-      errorMessage = "Failed to load doctor details";
-    }
+  } catch (error: any) {
+    errorMessage =
+      error?.response?.data?.message || "Failed to load doctor details";
   }
 
   if (!doctorDetails) {
     return (
-      <section className="space-y-4">
-        <Button asChild variant="outline">
-          <Link href="/consultation">Back to Consultation</Link>
-        </Button>
-        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
-          {errorMessage || "Doctor details not available."}
+      <section className="mx-auto max-w-7xl px-4 py-12 text-center space-y-4">
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-8 max-w-md mx-auto">
+          <p className="text-destructive font-medium mb-4">
+            {errorMessage || "Doctor not found."}
+          </p>
+          <Button asChild variant="outline">
+            <Link href="/consultation">
+              <ChevronLeft className="mr-2 size-4" />
+              Back to List
+            </Link>
+          </Button>
         </div>
       </section>
     );
   }
 
-  const todayStart = getTodayStart();
-
-  const availableUpcomingSchedules = (doctorDetails.doctorSchedules ?? [])
-    .filter((item) => {
-      if (item.isBooked) {
-        return false;
-      }
-
-      if (!item.schedule?.startDateTime) {
-        return false;
-      }
-
-      const startDate = new Date(item.schedule.startDateTime);
-      if (Number.isNaN(startDate.getTime())) {
-        return false;
-      }
-
-      return startDate >= todayStart;
-    })
-    .sort((a, b) => {
-      const leftValue = new Date(a.schedule?.startDateTime ?? 0).getTime();
-      const rightValue = new Date(b.schedule?.startDateTime ?? 0).getTime();
-      return leftValue - rightValue;
-    });
+  const primarySpecialty = doctorDetails.specialties?.[0]?.specialty?.title;
 
   return (
-    <section className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-      <Button asChild variant="outline">
-        <Link href="/consultation">Back to Consultation</Link>
-      </Button>
-
-      <div className="relative overflow-hidden rounded-2xl border bg-linear-to-r from-sky-50 via-white to-cyan-50 p-6">
-        <div className="absolute -right-12 -top-12 h-44 w-44 rounded-full bg-sky-300/20 blur-3xl" />
-        <div className="absolute -bottom-12 left-8 h-36 w-36 rounded-full bg-cyan-200/25 blur-3xl" />
-        <div className="flex flex-col gap-4 md:flex-row md:items-start">
-          <Avatar className="size-24 ring-4 ring-white shadow-sm">
-            <AvatarImage
-              src={doctorDetails.profilePhoto}
-              alt={doctorDetails.name}
-            />
-            <AvatarFallback>{getInitials(doctorDetails.name)}</AvatarFallback>
-          </Avatar>
-
-          <div className="relative space-y-2">
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+    <div className="min-h-screen bg-muted/30">
+      {/* Top Banner / Breadcrumb */}
+      <div className="bg-background border-b py-4">
+        <div className="mx-auto max-w-7xl px-4 flex items-center justify-between">
+          <Button asChild variant="ghost" size="sm" className="-ml-2">
+            <Link href="/consultation">
+              <ChevronLeft className="mr-1 size-4" />
+              Back to Doctors
+            </Link>
+          </Button>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-primary transition-colors">
+              Home
+            </Link>
+            <span>/</span>
+            <Link
+              href="/consultation"
+              className="hover:text-primary transition-colors"
+            >
+              Consultation
+            </Link>
+            <span>/</span>
+            <span className="font-medium text-foreground truncate max-w-[150px]">
               {doctorDetails.name}
-            </h1>
-            <p className="text-muted-foreground">
-              {doctorDetails.designation || "N/A"}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {doctorDetails.currentWorkingPlace || "N/A"}
-            </p>
+            </span>
+          </div>
+        </div>
+      </div>
 
-            <div className="flex flex-wrap gap-2">
-              {(doctorDetails.specialties ?? []).map((item) => (
-                <Badge key={item.specialty.id} variant="secondary">
-                  {item.specialty.title}
-                </Badge>
-              ))}
-              {(!doctorDetails.specialties ||
-                doctorDetails.specialties.length === 0) && (
-                <Badge variant="secondary">No specialties listed</Badge>
-              )}
+      <section className="mx-auto max-w-7xl px-4 py-8 space-y-8">
+        {/* Main Header Card */}
+        <div className="relative overflow-hidden rounded-3xl border bg-card shadow-lg p-6 md:p-10">
+          <div className="absolute top-0 right-0 h-32 w-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10" />
+
+          <div className="flex flex-col md:flex-row gap-8 items-start relative">
+            <div className="relative group">
+              <Avatar className="size-32 md:size-40 ring-4 ring-background shadow-xl">
+                <AvatarImage
+                  src={doctorDetails.profilePhoto}
+                  alt={doctorDetails.name}
+                  className="object-cover"
+                />
+                <AvatarFallback className="text-3xl bg-primary/10 text-primary">
+                  {getInitials(doctorDetails.name)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-2 -right-2 bg-primary text-white p-2 rounded-full border-4 border-background">
+                <Star className="size-5 fill-current" />
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-1 text-xs">
-              <Badge variant="outline">
-                Experience: {doctorDetails.experience ?? 0} yrs
-              </Badge>
-              <Badge variant="outline">
-                Fee: ${doctorDetails.appointmentFee?.toFixed(2) ?? "N/A"}
-              </Badge>
-              <Badge variant="outline">
-                Rating: {doctorDetails.averageRating?.toFixed(1) ?? "0.0"}
-              </Badge>
+            <div className="flex-1 space-y-4">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                    {doctorDetails.name}
+                  </h1>
+                  <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none px-3">
+                    Available
+                  </Badge>
+                </div>
+                <p className="text-lg font-medium text-primary flex items-center gap-2">
+                  <Briefcase className="size-4" />
+                  {doctorDetails.designation || "Doctor"}
+                </p>
+              </div>
+
+              <div className="grid gap-2 text-sm text-muted-foreground">
+                <p className="flex items-center gap-2">
+                  <GraduationCap className="size-4 text-primary/70" />
+                  {doctorDetails.qualification || "Medical Specialist"}
+                </p>
+                <p className="flex items-center gap-2">
+                  <MapPin className="size-4 text-primary/70" />
+                  {doctorDetails.currentWorkingPlace || "Health Center"}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 py-2">
+                {(doctorDetails.specialties ?? []).map((item) => (
+                  <Badge
+                    key={item.specialty.id}
+                    variant="secondary"
+                    className="px-3 py-1 bg-primary/5 text-primary hover:bg-primary/10 transition-colors border-none font-medium"
+                  >
+                    {item.specialty.title}
+                  </Badge>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-6 pt-2">
+                <div className="text-center">
+                  <p className="text-xl font-bold text-foreground">
+                    {doctorDetails.experience ?? 0}+
+                  </p>
+                  <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
+                    Years Exp.
+                  </p>
+                </div>
+                <div className="w-px h-10 bg-border" />
+                <div className="text-center">
+                  <p className="text-xl font-bold text-foreground">
+                    {doctorDetails.averageRating?.toFixed(1) ?? "5.0"}
+                  </p>
+                  <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
+                    Rating
+                  </p>
+                </div>
+                <div className="w-px h-10 bg-border" />
+                <div className="text-center">
+                  <p className="text-xl font-bold text-primary">
+                    ${doctorDetails.appointmentFee?.toFixed(2) ?? "0.00"}
+                  </p>
+                  <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider">
+                    Fees
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="pt-3">
+            <div className="w-full md:w-auto md:min-w-[240px] space-y-3 pt-4 md:pt-0">
               <BookAppointmentModal
                 doctorId={String(doctorDetails.id)}
                 doctorName={doctorDetails.name}
                 isAuthenticated={Boolean(currentUser)}
                 viewerRole={currentUser?.role ?? null}
+                fullWidth
               />
+              <Button
+                variant="outline"
+                className="w-full h-12 rounded-xl group"
+                asChild
+              >
+                <a href={`mailto:${doctorDetails.email}`}>Contact Doctor</a>
+              </Button>
+              <p className="text-[11px] text-center text-muted-foreground px-4">
+                Bookings are secure and encrypted. Need help?{" "}
+                <Link href="/contact" className="underline">
+                  Contact Support
+                </Link>
+              </p>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <h2 className="mb-3 text-base font-semibold">
-            Professional Information
-          </h2>
-          <div className="space-y-2 text-sm">
-            <p>
-              <span className="font-medium">Qualification:</span>{" "}
-              {doctorDetails.qualification || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Experience:</span>{" "}
-              {doctorDetails.experience ?? 0} years
-            </p>
-            <p>
-              <span className="font-medium">Registration Number:</span>{" "}
-              {doctorDetails.registrationNumber || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Appointment Fee:</span> $
-              {doctorDetails.appointmentFee?.toFixed(2) ?? "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Average Rating:</span>{" "}
-              {doctorDetails.averageRating?.toFixed(1) ?? "0.0"}
-            </p>
-          </div>
+        {/* Details and Tabs */}
+        <div className="rounded-3xl border bg-card p-6 md:p-10 shadow-sm">
+          <DoctorDetailsTabs doctor={doctorDetails} />
         </div>
 
-        <div className="rounded-2xl border bg-card p-5 shadow-sm">
-          <h2 className="mb-3 text-base font-semibold">Contact Information</h2>
-          <div className="space-y-2 text-sm">
-            <p>
-              <span className="font-medium">Email:</span>{" "}
-              {doctorDetails.email || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Contact Number:</span>{" "}
-              {doctorDetails.contactNumber || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Gender:</span>{" "}
-              {doctorDetails.gender || "N/A"}
-            </p>
-            <p>
-              <span className="font-medium">Address:</span>{" "}
-              {doctorDetails.address || "N/A"}
-            </p>
-          </div>
+        {/* Related Doctors */}
+        <div className="pt-8">
+          <RelatedDoctors
+            specialtyTitle={primarySpecialty}
+            currentDoctorId={doctorDetails.id}
+          />
         </div>
-      </div>
-
-      <div className="rounded-2xl border bg-card p-5 shadow-sm">
-        <div className="mb-4 flex flex-wrap items-center gap-2">
-          <h2 className="text-base font-semibold">
-            Available Doctor Schedules
-          </h2>
-          <Badge variant="secondary">Today onward</Badge>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {availableUpcomingSchedules.slice(0, 18).map((item, index) => (
-            <div
-              key={item.id ?? item.schedule?.id ?? `schedule-${index}`}
-              className="rounded-xl border bg-muted/20 p-4 text-sm"
-            >
-              <p>
-                <span className="font-medium">Start:</span>{" "}
-                {formatDateTime(item.schedule?.startDateTime)}
-              </p>
-              <p>
-                <span className="font-medium">End:</span>{" "}
-                {formatDateTime(item.schedule?.endDateTime)}
-              </p>
-              <p className="pt-1 text-xs text-emerald-700">Available</p>
-            </div>
-          ))}
-          {availableUpcomingSchedules.length === 0 && (
-            <p className="text-sm text-muted-foreground">
-              No available schedules from today onward.
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="rounded-2xl border bg-card p-5 shadow-sm">
-        <h2 className="mb-3 text-base font-semibold">Patient Reviews</h2>
-        <div className="space-y-3">
-          {(doctorDetails.reviews ?? []).map((review, index) => (
-            <div
-              key={review.id ?? `review-${index}`}
-              className="rounded-md border p-3 text-sm"
-            >
-              <p>
-                <span className="font-medium">Rating:</span>{" "}
-                {review.rating ?? "N/A"} / 5
-              </p>
-              <p>
-                <span className="font-medium">Comment:</span>{" "}
-                {review.comment || "N/A"}
-              </p>
-              <p>
-                <span className="font-medium">Patient ID:</span>{" "}
-                {review.patientId || "N/A"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {formatDateTime(review.createdAt)}
-              </p>
-            </div>
-          ))}
-          {(!doctorDetails.reviews || doctorDetails.reviews.length === 0) && (
-            <p className="text-sm text-muted-foreground">No reviews yet.</p>
-          )}
-        </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 

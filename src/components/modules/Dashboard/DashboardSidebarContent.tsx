@@ -15,6 +15,8 @@ interface DashboardSidebarContentProps {
   dashboardHome: string;
 }
 
+import Image from "next/image";
+
 const DashboardSidebarContent = ({
   dashboardHome,
   navItems,
@@ -26,10 +28,14 @@ const DashboardSidebarContent = ({
     <div className="hidden md:flex h-full w-64 flex-col border-r bg-card overflow-y-auto">
       {/* Logo / Brand */}
       <div className="flex h-16 items-center border-b px-6 py-3">
-        <Link href={dashboardHome}>
-          <span className="text-lg font-bold text-primary">
-            MediLink Healthcare
-          </span>
+        <Link href={dashboardHome} className="flex items-center gap-2">
+          <Image 
+            src="/logo.webp" 
+            alt="MediLink" 
+            width={120} 
+            height={32} 
+            className="h-8 w-auto object-contain" 
+          />
         </Link>
       </div>
 

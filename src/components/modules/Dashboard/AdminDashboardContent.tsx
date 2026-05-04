@@ -11,11 +11,11 @@ import { useQuery } from "@tanstack/react-query";
 const AdminDashboardContent = () => {
   const { data: adminDashboardData } = useQuery({
     queryKey: ["admin-dashboard-data"],
-    queryFn: getDashboardData,
-    refetchOnWindowFocus: "always", // Refetch the data when the window regains focus
+    queryFn: () => getDashboardData<IAdminDashboardData>(),
+    refetchOnWindowFocus: "always",
   });
 
-  const { data } = adminDashboardData as ApiResponse<IAdminDashboardData>;
+  const data = adminDashboardData?.data;
 
   console.log("Admin Dashboard Data in Content Component:", data);
 

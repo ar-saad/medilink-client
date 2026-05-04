@@ -1,11 +1,11 @@
 "use server";
 
 import { httpClient } from "@/lib/axios/httpClient";
-import { IAdminDashboardData } from "@/types/dashboard.types";
+import { TDashboardData } from "@/types/dashboard.types";
 
-export async function getDashboardData() {
+export async function getDashboardData<T = TDashboardData>() {
   try {
-    const response = await httpClient.get<IAdminDashboardData>("/statistics");
+    const response = await httpClient.get<T>("/statistics");
 
     return response;
   } catch (error: any) {

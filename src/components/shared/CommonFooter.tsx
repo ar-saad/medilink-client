@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 
@@ -7,8 +8,14 @@ const CommonFooter = () => {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="space-y-4">
-            <Link href="/" className="text-2xl font-bold tracking-tight text-primary">
-              MediLink
+            <Link href="/" className="flex items-center gap-2">
+              <Image 
+                src="/logo.webp" 
+                alt="MediLink" 
+                width={120} 
+                height={32} 
+                className="h-8 w-auto object-contain" 
+              />
             </Link>
             <p className="text-sm text-muted-foreground">
               Providing accessible and high-quality healthcare services to everyone. Our platform connects you with the best medical professionals.

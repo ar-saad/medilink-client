@@ -5,10 +5,12 @@ import DataTableFilters, {
   DataTableFilterValues,
 } from "@/components/shared/table/DataTableFilters";
 import DataTableSearch from "@/components/shared/table/DataTableSearch";
-import BookAppointmentModal from "@/components/modules/Patient/Appointments/BookAppointmentModal";
+import DoctorCard from "./DoctorCard";
+import FilterSidebar from "./FilterSidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -77,13 +79,6 @@ const getSanitizedConsultationQueryString = (queryString: string) => {
   return sanitizedParams.toString();
 };
 
-const getDoctorInitials = (name: string) => {
-  const parts = name.trim().split(/\s+/);
-  const initials = parts
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "");
-  return initials.join("") || "DR";
-};
 
 const Pagination = ({
   currentPage,
@@ -247,202 +242,136 @@ const DoctorsList = ({
   const isBusy = isLoading || isFetching || isRouteRefreshPending;
 
   return (
-    <section className="space-y-6 py-8 max-w-7xl mx-auto">
-      <div className="relative overflow-hidden rounded-2xl border bg-linear-to-br from-cyan-50 via-white to-blue-50 p-6">
+    <section className="space-y-6 py-8 max-w-7xl mx-auto px-4">
+      {/* Header Section */}
+      <div className="relative overflow-hidden rounded-2xl border bg-linear-to-br from-cyan-50 via-white to-blue-50 p-6 md:p-8">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-200/30 blur-2xl" />
         <div className="absolute -bottom-10 -left-10 h-36 w-36 rounded-full bg-cyan-200/30 blur-2xl" />
         <div className="relative space-y-3">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-primary">
             Consult With Our Specialists
           </h1>
-          <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
-            Discover trusted doctors, compare experience and fees, and open
-            detailed profiles to find the right specialist.
+          <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
+            Discover trusted doctors, compare experience and fees, and find the right specialist for your health needs.
           </p>
         </div>
       </div>
 
-      <div className="rounded-2xl border bg-card p-4 shadow-sm sm:p-5">
-        <div className="flex flex-wrap items-start gap-3">
-          <DataTableSearch
-            key={searchTermFromUrl}
-            initialValue={searchTermFromUrl}
-            placeholder="Search doctor by name, qualification, email..."
-            debounceMs={700}
-            onDebouncedChange={handleDebouncedSearchChange}
-            isLoading={isBusy}
-          />
-
-          <DataTableFilters
-            filters={filterConfigs}
-            values={filterValuesForControls}
-            onFilterChange={handleFilterChange}
-            onClearAll={clearAllFilters}
-            isLoading={isBusy}
-          />
-
-          <div className="ml-auto flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Sort</span>
-            <Select
-              value={
-                optimisticSortingState[0]?.id
-                  ? `${optimisticSortingState[0]?.id}:${optimisticSortingState[0]?.desc ? "desc" : "asc"}`
-                  : "default"
-              }
-              onValueChange={(value) => {
-                if (value === "default") {
-                  handleSortingChange([]);
-                  return;
-                }
-
-                const [sortBy, sortOrder] = value.split(":");
-                handleSortingChange([
-                  { id: sortBy, desc: sortOrder === "desc" },
-                ]);
-              }}
-            >
-              <SelectTrigger className="w-55" disabled={isBusy}>
-                <SelectValue placeholder="Sort doctors" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="averageRating:desc">
-                  Rating (High to Low)
-                </SelectItem>
-                <SelectItem value="appointmentFee:asc">
-                  Fee (Low to High)
-                </SelectItem>
-                <SelectItem value="experience:desc">
-                  Experience (High to Low)
-                </SelectItem>
-                <SelectItem value="createdAt:desc">Newest</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </div>
-
-      {isBusy && (
-        <div className="rounded-md border p-4 text-sm text-muted-foreground">
-          Loading doctors...
-        </div>
-      )}
-
-      {!isBusy && doctors.length === 0 && (
-        <div className="rounded-md border p-6 text-center text-sm text-muted-foreground">
-          No doctors found for your current search/filter.
-        </div>
-      )}
-
-      {!isBusy && doctors.length > 0 && (
-        <>
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {doctors.map((doctor: TDoctor) => {
-              const specialtiesList =
-                doctor.specialties?.map((item) => item.specialty.title) ?? [];
-
-              return (
-                <article
-                  key={String(doctor.id)}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <div className="pointer-events-none absolute left-0 top-0 h-1 w-full bg-linear-to-r from-cyan-500 via-sky-500 to-blue-500 opacity-80" />
-                  <div className="flex items-start gap-3">
-                    <Avatar className="size-14 ring-2 ring-blue-100">
-                      <AvatarImage
-                        src={doctor.profilePhoto}
-                        alt={doctor.name}
-                      />
-                      <AvatarFallback>
-                        {getDoctorInitials(doctor.name)}
-                      </AvatarFallback>
-                    </Avatar>
-
-                    <div className="min-w-0 space-y-1">
-                      <h3 className="truncate text-base font-semibold">
-                        {doctor.name}
-                      </h3>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {doctor.designation || "N/A"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {doctor.currentWorkingPlace || "N/A"}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">
-                        {doctor.email || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid gap-2 rounded-lg bg-muted/40 p-3 text-sm">
-                    <p>
-                      <span className="font-medium">Experience:</span>{" "}
-                      {doctor.experience ?? 0} years
-                    </p>
-                    <p>
-                      <span className="font-medium">Fee:</span> $
-                      {doctor.appointmentFee?.toFixed(2) ?? "N/A"}
-                    </p>
-                    <p>
-                      <span className="font-medium">Rating:</span>{" "}
-                      {doctor.averageRating?.toFixed(1) ?? "0.0"}
-                    </p>
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {specialtiesList.length > 0 ? (
-                      specialtiesList.slice(0, 3).map((title) => (
-                        <Badge
-                          key={`${doctor.id}-${title}`}
-                          variant="secondary"
-                        >
-                          {title}
-                        </Badge>
-                      ))
-                    ) : (
-                      <Badge variant="secondary">No specialties</Badge>
-                    )}
-                  </div>
-
-                  <div className="mt-auto grid gap-2 pt-5 sm:grid-cols-2">
-                    <BookAppointmentModal
-                      doctorId={String(doctor.id)}
-                      doctorName={doctor.name}
-                      isAuthenticated={isAuthenticated}
-                      viewerRole={viewerRole}
-                      triggerClassName="w-full"
-                      fullWidth
-                    />
-                    <Button asChild className="w-full">
-                      <Link href={`/consultation/doctor/${doctor.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-
-          <div className="space-y-3 pt-2">
-            <Pagination
-              currentPage={optimisticPaginationState.pageIndex + 1}
-              totalPages={meta?.totalPages ?? 1}
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Sidebar - Filters */}
+        <aside className="w-full lg:w-64 flex-shrink-0">
+          <div className="sticky top-24 space-y-6">
+            <FilterSidebar
+              filters={filterConfigs}
+              values={filterValuesForControls}
+              onFilterChange={handleFilterChange}
+              onClearAll={clearAllFilters}
               isLoading={isBusy}
-              onPageChange={(page) => {
-                handlePaginationChange({
-                  pageIndex: page - 1,
-                  pageSize: optimisticPaginationState.pageSize,
-                });
-              }}
             />
-
-            <p className="text-center text-sm text-muted-foreground">
-              Total {meta?.total ?? doctors.length} doctors
-            </p>
           </div>
-        </>
-      )}
+        </aside>
+
+        {/* Main Content - Search, Sort, and Grid */}
+        <main className="flex-1 space-y-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="w-full sm:flex-1">
+              <DataTableSearch
+                key={searchTermFromUrl}
+                initialValue={searchTermFromUrl}
+                placeholder="Search by name, qualification..."
+                debounceMs={700}
+                onDebouncedChange={handleDebouncedSearchChange}
+                isLoading={isBusy}
+              />
+            </div>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-sm font-medium whitespace-nowrap">Sort by:</span>
+              <Select
+                value={
+                  optimisticSortingState[0]?.id
+                    ? `${optimisticSortingState[0]?.id}:${optimisticSortingState[0]?.desc ? "desc" : "asc"}`
+                    : "default"
+                }
+                onValueChange={(value) => {
+                  if (value === "default") {
+                    handleSortingChange([]);
+                    return;
+                  }
+                  const [sortBy, sortOrder] = value.split(":");
+                  handleSortingChange([
+                    { id: sortBy, desc: sortOrder === "desc" },
+                  ]);
+                }}
+              >
+                <SelectTrigger className="w-full sm:w-48 h-10" disabled={isBusy}>
+                  <SelectValue placeholder="Sort doctors" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">Default</SelectItem>
+                  <SelectItem value="averageRating:desc">Rating (High to Low)</SelectItem>
+                  <SelectItem value="appointmentFee:asc">Fee (Low to High)</SelectItem>
+                  <SelectItem value="experience:desc">Experience (High to Low)</SelectItem>
+                  <SelectItem value="createdAt:desc">Newest</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {isBusy && (
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-64 rounded-2xl border bg-muted animate-pulse" />
+              ))}
+            </div>
+          )}
+
+          {!isBusy && doctors.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-20 rounded-2xl border bg-card text-center space-y-4">
+              <div className="size-16 rounded-full bg-muted flex items-center justify-center">
+                 <X className="size-8 text-muted-foreground" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-lg font-medium">No doctors found</p>
+                <p className="text-sm text-muted-foreground">Try adjusting your filters or search terms.</p>
+              </div>
+              <Button variant="outline" onClick={clearAllFilters}>Clear all filters</Button>
+            </div>
+          )}
+
+          {!isBusy && doctors.length > 0 && (
+            <>
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
+                {doctors.map((doctor: TDoctor) => (
+                  <DoctorCard
+                    key={String(doctor.id)}
+                    doctor={doctor}
+                    isAuthenticated={isAuthenticated}
+                    viewerRole={viewerRole}
+                  />
+                ))}
+              </div>
+
+              <div className="space-y-4 pt-6 border-t">
+                <Pagination
+                  currentPage={optimisticPaginationState.pageIndex + 1}
+                  totalPages={meta?.totalPages ?? 1}
+                  isLoading={isBusy}
+                  onPageChange={(page) => {
+                    handlePaginationChange({
+                      pageIndex: page - 1,
+                      pageSize: optimisticPaginationState.pageSize,
+                    });
+                  }}
+                />
+                <p className="text-center text-sm text-muted-foreground">
+                  Showing {doctors.length} of {meta?.total ?? doctors.length} doctors
+                </p>
+              </div>
+            </>
+          )}
+        </main>
+      </div>
     </section>
   );
 };

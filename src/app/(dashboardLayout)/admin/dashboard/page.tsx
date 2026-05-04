@@ -13,7 +13,7 @@ const AdminDashboardPage = async () => {
 
   await queryClient.prefetchQuery({
     queryKey: ["admin-dashboard-data"],
-    queryFn: getDashboardData,
+    queryFn: () => getDashboardData<IAdminDashboardData>(),
     staleTime: 30 * 1000, // 30 seconds - data will be considered fresh for this duration, and won't be refetched
     gcTime: 5 * 60 * 1000, // 5 minutes - data will be garbage collected after this duration if not used
   });
