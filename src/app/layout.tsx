@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     "A comprehensive healthcare management system built with Next.js, Prisma, and Tailwind CSS. MediLink streamlines patient records, appointments, and billing for efficient healthcare administration.",
 };
 
+import { UserProvider } from "@/providers/UserProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,10 +39,13 @@ export default function RootLayout({
         geistMono.variable,
         "font-sans",
         inter.variable,
+        inter.variable,
       )}
     >
       <body className="min-h-full flex flex-col">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <UserProvider>{children}</UserProvider>
+        </QueryProvider>
       </body>
     </html>
   );

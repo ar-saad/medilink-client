@@ -1,3 +1,4 @@
+import CommonFooter from "@/components/shared/CommonFooter";
 import CommonNavbar from "@/components/shared/CommonNavbar";
 
 export default function CommonLayout({
@@ -8,7 +9,8 @@ export default function CommonLayout({
   return (
     <>
       <CommonNavbar />
-      {children}
+      <main className="flex-grow">{children}</main>
+      <CommonFooter />
     </>
   );
 }
