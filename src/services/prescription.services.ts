@@ -34,3 +34,14 @@ export const getAllPrescriptions = async () => {
     throw error;
   }
 };
+
+export const getPrescriptionByAppointmentId = async (appointmentId: string) => {
+  try {
+    return await httpClient.get<TPrescription>(
+      `/prescriptions/${appointmentId}`,
+    );
+  } catch (error) {
+    console.log("Error fetching prescription by appointment id:", error);
+    throw error;
+  }
+};

@@ -163,6 +163,11 @@ export const patientNavItems: NavSection[] = [
         href: "/dashboard/health-records",
         icon: "Activity",
       },
+      {
+        title: "Medical Reports",
+        href: "/dashboard/medical-reports",
+        icon: "ClipboardPlus",
+      },
     ],
   },
 ];

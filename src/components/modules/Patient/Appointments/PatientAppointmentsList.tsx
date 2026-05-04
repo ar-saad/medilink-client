@@ -20,10 +20,14 @@ import {
   CalendarClock,
   CircleDollarSign,
   CreditCard,
+  FileText,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import ViewPrescriptionModal from "./ViewPrescriptionModal";
+import CreateReviewModal from "./CreateReviewModal";
 
 interface PatientAppointmentsListProps {
   appointments: TAppointment[];
@@ -49,6 +53,9 @@ const PatientAppointmentsList = ({
   feedbackType,
   feedbackMessage,
 }: PatientAppointmentsListProps) => {
+  const [prescriptionId, setPrescriptionId] = useState<string | null>(null);
+  const [reviewId, setReviewId] = useState<string | null>(null);
+
   const initiatePaymentMutation = useMutation({
     mutationFn: initiateAppointmentPaymentAction,
   });
@@ -141,6 +148,9 @@ const PatientAppointmentsList = ({
               appointment.paymentStatus !== "PAID" &&
               appointment.status !== "CANCELED";
 
+            const hasPrescription = appointment.status === "COMPLETED"; // Prescriptions are usually added when status is COMPLETED
+            const canReview = appointment.status === "COMPLETED" && appointment.paymentStatus === "PAID";
+
             return (
               <Card key={appointment.id} className="gap-4">
                 <CardHeader>
@@ -212,39 +222,79 @@ const PatientAppointmentsList = ({
                   </div>
                 </CardContent>
 
-                <CardFooter className="justify-between gap-3">
-                  <Button asChild variant="outline">
-                    <Link
-                      href={`/consultation/doctor/${appointment.doctorId || appointment.doctor?.id || ""}`}
-                    >
-                      View Doctor
-                    </Link>
-                  </Button>
+                <CardFooter className="flex-wrap justify-between gap-3">
+                  <div className="flex gap-2">
+                    <Button asChild variant="outline" size="sm">
+                      <Link
+                        href={`/consultation/doctor/${appointment.doctorId || appointment.doctor?.id || ""}`}
+                      >
+                        Doctor Profile
+                      </Link>
+                    </Button>
+                    
+                    {hasPrescription && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setPrescriptionId(appointment.id)}
+                      >
+                        <FileText className="mr-2 h-4 w-4" />
+                        Prescription
+                      </Button>
+                    )}
+                  </div>
 
-                  {canPayNow ? (
-                    <Button
-                      type="button"
-                      onClick={() => void handlePayNow(appointment.id)}
-                      disabled={initiatePaymentMutation.isPending}
-                    >
-                      <CreditCard className="size-4" />
-                      {initiatePaymentMutation.isPending
-                        ? "Redirecting..."
-                        : "Pay Now"}
-                    </Button>
-                  ) : (
-                    <Button type="button" variant="secondary" disabled>
-                      {appointment.paymentStatus === "PAID"
-                        ? "Paid"
-                        : "Unavailable"}
-                    </Button>
-                  )}
+                  <div className="flex gap-2">
+                    {canReview && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+                        onClick={() => setReviewId(appointment.id)}
+                      >
+                        <Star className="mr-2 h-4 w-4 fill-yellow-600" />
+                        Rate Doctor
+                      </Button>
+                    )}
+
+                    {canPayNow ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => void handlePayNow(appointment.id)}
+                        disabled={initiatePaymentMutation.isPending}
+                      >
+                        <CreditCard className="mr-2 size-4" />
+                        {initiatePaymentMutation.isPending
+                          ? "Redirecting..."
+                          : "Pay Now"}
+                      </Button>
+                    ) : (
+                      <Button type="button" variant="secondary" size="sm" disabled>
+                        {appointment.paymentStatus === "PAID"
+                          ? "Paid"
+                          : "Unavailable"}
+                      </Button>
+                    )}
+                  </div>
                 </CardFooter>
               </Card>
             );
           })}
         </div>
       )}
+
+      <ViewPrescriptionModal 
+        appointmentId={prescriptionId}
+        open={!!prescriptionId}
+        onOpenChange={(open) => !open && setPrescriptionId(null)}
+      />
+
+      <CreateReviewModal 
+        appointmentId={reviewId}
+        open={!!reviewId}
+        onOpenChange={(open) => !open && setReviewId(null)}
+      />
     </div>
   );
 };

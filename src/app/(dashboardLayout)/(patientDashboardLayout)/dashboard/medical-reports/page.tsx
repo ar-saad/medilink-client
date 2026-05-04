@@ -1,11 +1,11 @@
 "use client";
 
-import ProfileForm from "@/components/modules/Common/ProfileManagement/ProfileForm";
+import MedicalReportsManager from "@/components/modules/Patient/MedicalReports/MedicalReportsManager";
 import { getMyProfile } from "@/services/profile.services";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
-const MyProfilePage = () => {
+const MedicalReportsPage = () => {
   const { data: response, isLoading } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getMyProfile(),
@@ -19,22 +19,20 @@ const MyProfilePage = () => {
     );
   }
 
-  const user = response?.data;
+  const patient = response?.data;
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Medical Reports</h1>
         <p className="text-muted-foreground text-lg">
-          Manage your personal information and profile preferences.
+          Upload and manage your diagnostic tests and medical documents.
         </p>
       </div>
       
-      <div className="rounded-2xl border bg-card p-6 shadow-sm sm:p-8">
-        <ProfileForm user={user} />
-      </div>
+      <MedicalReportsManager reports={patient?.medicalReports || []} />
     </div>
   );
 };
 
-export default MyProfilePage;
+export default MedicalReportsPage;
