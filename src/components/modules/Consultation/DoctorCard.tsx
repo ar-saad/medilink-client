@@ -93,10 +93,11 @@ const DoctorCard = ({ doctor, isAuthenticated, viewerRole }: DoctorCardProps) =>
           doctorName={doctor.name}
           isAuthenticated={isAuthenticated}
           viewerRole={viewerRole}
-          triggerClassName="w-full"
+          triggerClassName="w-full text-xs"
+          triggerText="Book Now"
           fullWidth
         />
-        <Button asChild className="w-full" variant="outline">
+        <Button asChild className="w-full text-xs" variant="outline">
           <Link href={`/consultation/doctor/${doctor.id}`}>
             View Details
           </Link>

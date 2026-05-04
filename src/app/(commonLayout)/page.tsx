@@ -6,6 +6,7 @@ import TopDoctorsSection from "@/components/features/home/TopDoctorsSection";
 import TestimonialsSection from "@/components/features/home/TestimonialsSection";
 import FAQSection from "@/components/features/home/FAQSection";
 import NewsletterSection from "@/components/features/home/NewsletterSection";
+import HowItWorksSection from "@/components/features/home/HowItWorksSection";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -17,6 +18,7 @@ const CommonHomePage = () => {
       <FeaturesSection />
       <SpecialtiesSection />
       <StatsSection />
+      <HowItWorksSection />
       <TopDoctorsSection />
       
       {/* Call to Action Section */}

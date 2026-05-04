@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Shield, Users, Award } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const AboutPage = () => {
   const stats = [
@@ -102,7 +103,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Team Section Placeholder */}
+      {/* Team Section */}
       <section className="py-24 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center gap-12">
@@ -112,17 +113,39 @@ const AboutPage = () => {
                 Our team consists of medical experts, engineers, and visionaries working together to solve the most pressing challenges in healthcare accessibility.
               </p>
               <p className="text-muted-foreground">
-                Founded in 2024, MediLink has quickly grown from a small startup to a trusted platform used by thousands of patients and doctors across the country.
+                Founded with a vision to democratize healthcare, MediLink has grown into a trusted ecosystem connecting thousands of lives to life-saving medical expertise every day.
               </p>
-              <Button asChild>
+              <div className="flex flex-wrap gap-4 pt-2">
+                 <div className="space-y-1">
+                    <p className="text-xl font-bold text-primary">Chief Medical Officer</p>
+                    <p className="text-sm text-muted-foreground">Dr. Michael Chen, MD</p>
+                 </div>
+                 <div className="w-px h-10 bg-border hidden sm:block" />
+                 <div className="space-y-1">
+                    <p className="text-xl font-bold text-primary">Head of Technology</p>
+                    <p className="text-sm text-muted-foreground">Sarah Williams</p>
+                 </div>
+              </div>
+              <Button asChild className="mt-4">
                 <Link href="/register">Join Our Community</Link>
               </Button>
             </div>
             <div className="flex-1 relative">
-               <div className="aspect-square rounded-3xl bg-linear-to-br from-primary/20 to-cyan-200/20 flex items-center justify-center">
-                  <span className="text-primary font-bold">Team Photo / Illustration Placeholder</span>
+               <div className="relative aspect-square overflow-hidden rounded-3xl shadow-2xl group">
+                  <Image 
+                    src="/medical_team_about.png" 
+                    alt="MediLink Medical Team" 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent" />
+                  <div className="absolute bottom-6 left-6 text-white">
+                     <p className="text-lg font-bold">The MediLink Team</p>
+                     <p className="text-sm opacity-90">Committed to your health</p>
+                  </div>
                </div>
-               <div className="absolute -bottom-6 -left-6 size-32 bg-yellow-400/20 rounded-full blur-2xl" />
+               <div className="absolute -bottom-6 -left-6 size-32 bg-primary/20 rounded-full blur-2xl -z-10" />
+               <div className="absolute -top-6 -right-6 size-32 bg-cyan-400/20 rounded-full blur-2xl -z-10" />
             </div>
           </div>
         </div>

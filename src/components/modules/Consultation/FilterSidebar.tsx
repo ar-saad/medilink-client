@@ -143,7 +143,7 @@ const MultiSelectControl = ({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 max-h-[180px] overflow-y-auto pr-2 custom-scrollbar scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
       {filter.options.map((option: any) => (
         <div key={option.value} className="flex items-center space-x-2">
           <Checkbox

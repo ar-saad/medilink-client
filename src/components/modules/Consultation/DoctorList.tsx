@@ -319,8 +319,8 @@ const DoctorsList = ({
           </div>
 
           {isBusy && (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
-              {Array.from({ length: 6 }).map((_, i) => (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="h-64 rounded-2xl border bg-muted animate-pulse" />
               ))}
             </div>
@@ -341,7 +341,7 @@ const DoctorsList = ({
 
           {!isBusy && doctors.length > 0 && (
             <>
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-2">
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {doctors.map((doctor: TDoctor) => (
                   <DoctorCard
                     key={String(doctor.id)}
