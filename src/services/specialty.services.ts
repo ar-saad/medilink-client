@@ -33,3 +33,16 @@ export const deleteSpecialty = async (id: string) => {
     throw error;
   }
 };
+
+export const updateSpecialty = async (id: string, formData: FormData) => {
+  try {
+    return await httpClient.patch<TSpecialty>(`/specialties/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  } catch (error) {
+    console.log("Error updating specialty:", error);
+    throw error;
+  }
+};
