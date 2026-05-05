@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   title: "MediLink Healthcare Management System",
   description:
     "A comprehensive healthcare management system built with Next.js, Prisma, and Tailwind CSS. MediLink streamlines patient records, appointments, and billing for efficient healthcare administration.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/icon.png",
+  },
 };
 
 import { UserProvider } from "@/providers/UserProvider";

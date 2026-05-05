@@ -10,6 +10,8 @@ import { UserInfo } from "@/types/user.types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 interface DashboardMobileSidebarProps {
   userInfo: UserInfo;
   navItems: NavSection[];
@@ -80,12 +82,13 @@ const DashboardMobileSidebar = ({
       {/* User Info */}
       <div className="border-t p-4">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-            {/* If profile photo doesn't exist, use first letter of user name as profile photo */}
-            <span className="text-sm font-semibold text-primary">
-              {userInfo.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
+          <Avatar className="h-9 w-9 border border-primary/20">
+            <AvatarImage src={userInfo.image} alt={userInfo.name || "User"} />
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {userInfo.name?.charAt(0).toUpperCase() ||
+                userInfo.email?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
 
           <div className="flex-1 overflow-hidden">
             <p className="text-sm font-medium truncate">{userInfo.name}</p>

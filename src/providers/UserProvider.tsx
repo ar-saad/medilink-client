@@ -9,7 +9,7 @@ interface User {
   email: string;
   role: "SUPER_ADMIN" | "ADMIN" | "DOCTOR" | "PATIENT";
   name?: string;
-  profilePhoto?: string;
+  image?: string;
 }
 
 interface UserContextType {

@@ -107,7 +107,7 @@ const CommonNavbar = () => {
                 >
                   <Avatar className="h-9 w-9 border border-primary/20">
                     <AvatarImage
-                      src={user.profilePhoto}
+                      src={user.image}
                       alt={user.name || "User"}
                     />
                     <AvatarFallback className="bg-primary/10 text-primary">

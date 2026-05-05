@@ -17,6 +17,8 @@ import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 interface UserDropdownProps {
   userInfo: UserInfo;
 }
@@ -43,10 +45,18 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"outline"} size={"icon"} className="rounded-full">
-          <span className="text-sm font-semibold">
-            {userInfo.name.charAt(0).toUpperCase()}
-          </span>
+        <Button
+          variant={"ghost"}
+          size={"icon"}
+          className="relative h-9 w-9 rounded-full"
+        >
+          <Avatar className="h-9 w-9 border border-primary/20">
+            <AvatarImage src={userInfo.image} alt={userInfo.name || "User"} />
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {userInfo.name?.charAt(0).toUpperCase() ||
+                userInfo.email?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         </Button>
       </DropdownMenuTrigger>
 
