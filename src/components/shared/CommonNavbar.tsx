@@ -20,6 +20,7 @@ import { getDefaultDashboardRoute } from "@/lib/authUtils";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 
 const publicNavLinks = [
+  { href: "/", label: "Home" },
   { href: "/consultation", label: "Doctors" },
   { href: "/diagnostics", label: "Diagnostics" },
   { href: "/medicine", label: "Medicine" },
@@ -48,9 +49,9 @@ const CommonNavbar = () => {
   const router = useRouter();
   const { user, refetch } = useUser();
 
-  if (pathname && authRoutes.has(pathname)) {
-    return null;
-  }
+  // if (pathname && authRoutes.has(pathname)) {
+  //   return null;
+  // }
 
   const handleLogout = async () => {
     await logoutUserFromCurrentSession();

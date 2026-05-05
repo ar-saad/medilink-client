@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Activity, ShieldCheck, Clock } from "lucide-react";
 
 const HeroSection = () => {
@@ -79,31 +80,39 @@ const HeroSection = () => {
         </div>
 
         <div className="relative hidden lg:block">
-          <div className="relative rounded-3xl border bg-card p-2 shadow-2xl transition-transform hover:scale-[1.02] duration-500">
-            {/* Note: In a real app, we'd use a high-quality medical image here */}
-            <div className="aspect-4/3 w-full rounded-2xl bg-linear-to-tr from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1631217816660-ad353559864e?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-80" />
-              <div className="relative z-10 rounded-xl bg-background/80 p-6 backdrop-blur-md shadow-lg border border-white/20">
-                <p className="text-sm font-bold text-primary">
-                  Doctor Available
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Dr. Sarah Johnson is online
-                </p>
+          <div className="absolute top-1/2 left-1/2 h-105 w-105 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/10 blur-[100px]" />
+
+          <div className="relative z-10 overflow-hidden rounded-3xl border border-border/70 bg-background/90 shadow-2xl backdrop-blur-sm">
+            <div className="relative aspect-5/4">
+              <Image
+                src="/assets/images/home_collection.png"
+                alt="MediLink platform highlights"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-background/70 via-background/15 to-transparent" />
+            </div>
+
+            <div className="space-y-4 p-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
+                Real Platform Experience
+              </p>
+              <p className="text-2xl font-bold leading-tight tracking-tight text-foreground">
+                A single place to consult, manage care, and follow treatment.
+              </p>
+              <div className="flex flex-wrap gap-2 text-xs font-medium text-muted-foreground">
+                <span className="rounded-full border border-border/80 px-3 py-1">
+                  Consultation
+                </span>
+                <span className="rounded-full border border-border/80 px-3 py-1">
+                  Diagnostics
+                </span>
+                <span className="rounded-full border border-border/80 px-3 py-1">
+                  Medicine
+                </span>
               </div>
             </div>
-          </div>
-
-          {/* Floating elements */}
-          <div className="absolute -bottom-6 -left-6 rounded-2xl bg-background p-4 shadow-xl border ring-1 ring-border animate-bounce-slow">
-            <div className="flex items-center gap-3">
-              <div className="h-3 w-3 rounded-full bg-green-500" />
-              <p className="text-sm font-medium">500+ Doctors Active</p>
-            </div>
-          </div>
-
-          <div className="absolute -top-6 -right-6 rounded-2xl bg-background p-4 shadow-xl border ring-1 ring-border animate-pulse-slow">
-            <p className="text-sm font-medium text-primary">98% Satisfaction</p>
           </div>
         </div>
       </div>

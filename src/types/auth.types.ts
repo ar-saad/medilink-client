@@ -17,3 +17,7 @@ export type TLoginResponse = {
     updatedAt: Date;
   };
 };
+
+export type TRegisterResponse = TLoginResponse & {
+  patient: any; // We can refine this later if needed
+};

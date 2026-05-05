@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function DoctorCardSkeleton() {
   return (
     <div className="rounded-xl border bg-card overflow-hidden shadow-sm">
-      <div className="aspect-[4/5] w-full">
+      <div className="aspect-4/5 w-full">
         <Skeleton className="h-full w-full" />
       </div>
       <div className="p-4 space-y-3">
