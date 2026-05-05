@@ -1,3 +1,9 @@
+import { DoctorListingSkeleton } from "@/components/shared/skeletons/DoctorCardSkeleton";
+
 export default function ConsultationPageLoading() {
-  return <p>Loading consultation page...</p>;
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <DoctorListingSkeleton />
+    </div>
+  );
 }

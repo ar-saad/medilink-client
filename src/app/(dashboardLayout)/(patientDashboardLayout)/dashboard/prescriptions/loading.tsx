@@ -1,3 +1,5 @@
-export default function MyPrescriptionsPageLoading() {
-  return <p>Loading my prescriptions...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

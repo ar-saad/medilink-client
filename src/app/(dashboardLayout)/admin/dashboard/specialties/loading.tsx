@@ -1,3 +1,5 @@
-export default function SpecialtiesManagementPageLoading() {
-  return <p>Loading specialties...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

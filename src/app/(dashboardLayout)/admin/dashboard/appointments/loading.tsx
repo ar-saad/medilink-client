@@ -1,3 +1,5 @@
-export default function AppointmentsManagementPageLoading() {
-  return <p>Loading appointments...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

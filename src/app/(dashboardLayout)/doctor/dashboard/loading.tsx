@@ -1,3 +1,5 @@
+import { DashboardSkeleton } from "@/components/shared/skeletons/DashboardSkeleton";
+
 export default function DoctorDashboardLoading() {
-  return <p>Loading doctor's dashboard...</p>;
+  return <DashboardSkeleton />;
 }

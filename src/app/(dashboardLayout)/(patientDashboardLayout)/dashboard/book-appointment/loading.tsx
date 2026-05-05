@@ -1,3 +1,5 @@
-export default function BookAppointmentPageLoading() {
-  return <p>Loading book appointment page...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

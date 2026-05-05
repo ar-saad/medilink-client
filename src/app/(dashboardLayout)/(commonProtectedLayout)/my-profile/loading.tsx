@@ -1,3 +1,5 @@
-export default function MyProfilePageLoading() {
-  return <p>Loading my profile...</p>;
+import { ProfileSkeleton } from "@/components/shared/skeletons/ProfileSkeleton";
+
+export default function MyProfileLoading() {
+  return <ProfileSkeleton />;
 }

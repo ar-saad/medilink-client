@@ -1,3 +1,5 @@
+import { PageLoading } from "@/components/shared/PageLoading";
+
 export default function ChangePasswordPageLoading() {
-  return <p>Loading change password page...</p>;
+  return <PageLoading message="Loading security settings..." />;
 }

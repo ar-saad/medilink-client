@@ -1,3 +1,5 @@
-export default function DoctorsReviewsPageLoading() {
-  return <p>Loading doctor's reviews...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

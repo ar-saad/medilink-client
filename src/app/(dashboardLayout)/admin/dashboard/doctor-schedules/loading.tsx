@@ -1,3 +1,5 @@
-export default function DoctorSchedulesManagementPageLoading() {
-  return <p>Loading doctor schedules...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

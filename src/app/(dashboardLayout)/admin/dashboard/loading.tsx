@@ -1,3 +1,5 @@
+import { DashboardSkeleton } from "@/components/shared/skeletons/DashboardSkeleton";
+
 export default function AdminsDashboardLoading() {
-  return <p>Loading admin dashboard...</p>;
+  return <DashboardSkeleton />;
 }

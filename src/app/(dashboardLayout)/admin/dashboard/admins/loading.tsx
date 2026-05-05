@@ -1,3 +1,5 @@
-export default function AdminsManagementPageLoading() {
-  return <p>Loading admins...</p>;
+import { TableSkeleton } from "@/components/shared/skeletons/TableSkeleton";
+
+export default function Loading() {
+  return <TableSkeleton />;
 }

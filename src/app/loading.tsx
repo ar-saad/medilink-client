@@ -1,4 +1,5 @@
+import { PageLoading } from "@/components/shared/PageLoading";
+
 export default function GlobalLoading() {
-  // Or a custom loading skeleton component
-  return <p>Global Loading...</p>;
+  return <PageLoading message="Preparing MediLink..." />;
 }
