@@ -15,14 +15,19 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+import { updateReview } from "@/services/review.services";
+import { TReview } from "@/types/appointment.types";
+
 interface CreateReviewModalProps {
   appointmentId: string | null;
+  initialReview?: TReview | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 const CreateReviewModal = ({
   appointmentId,
+  initialReview,
   open,
   onOpenChange,
 }: CreateReviewModalProps) => {
@@ -30,10 +35,15 @@ const CreateReviewModal = ({
   const [hoveredRating, setHoveredRating] = useState(0);
 
   const reviewMutation = useMutation({
-    mutationFn: (payload: any) => createReview(payload),
+    mutationFn: (payload: any) => {
+      if (initialReview) {
+        return updateReview(initialReview.id, payload);
+      }
+      return createReview(payload);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-appointments"] });
-      toast.success("Review submitted successfully");
+      toast.success(initialReview ? "Review updated successfully" : "Review submitted successfully");
       onOpenChange(false);
       form.reset();
     },
@@ -44,24 +54,32 @@ const CreateReviewModal = ({
 
   const form = useForm({
     defaultValues: {
-      rating: 5,
-      comment: "",
+      rating: initialReview?.rating || 5,
+      comment: initialReview?.comment || "",
     },
     onSubmit: async ({ value }) => {
       if (!appointmentId) return;
-      reviewMutation.mutate({
-        appointmentId,
+      
+      const payload: any = {
         rating: value.rating,
         comment: value.comment,
-      });
+      };
+
+      if (!initialReview) {
+        payload.appointmentId = appointmentId;
+      }
+
+      reviewMutation.mutate(payload);
     },
   });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[450px]" key={appointmentId || "new"}>
         <DialogHeader>
-          <DialogTitle>Rate Your Experience</DialogTitle>
+          <DialogTitle>
+            {initialReview ? "Update Your Review" : "Rate Your Experience"}
+          </DialogTitle>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -145,10 +163,10 @@ const CreateReviewModal = ({
               {reviewMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Submitting...
+                  {initialReview ? "Updating..." : "Submitting..."}
                 </>
               ) : (
-                "Submit Review"
+                initialReview ? "Update Review" : "Submit Review"
               )}
             </Button>
           </div>

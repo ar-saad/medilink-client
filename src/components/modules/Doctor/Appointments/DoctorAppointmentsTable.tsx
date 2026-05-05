@@ -4,7 +4,7 @@ import DataTable from "@/components/shared/table/DataTable";
 import { Button } from "@/components/ui/button";
 import { changeAppointmentStatus, getMyAppointments } from "@/services/appointment.services";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { FileText, MoreHorizontal } from "lucide-react";
+import { FileText, Loader2, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { doctorAppointmentsColumns } from "./doctorAppointmentsColumns";
@@ -43,16 +43,32 @@ const DoctorAppointmentsTable = () => {
     ...doctorAppointmentsColumns,
     {
       id: "actions",
-      header: "Actions",
+      header: () => <div className="text-right">Actions</div>,
       cell: ({ row }: { row: any }) => {
         const appointment = row.original;
         const canPrescribe = appointment.status === "INPROGRESS" || appointment.status === "COMPLETED";
         
+        const isUpdating = statusMutation.isPending && statusMutation.variables?.id === appointment.id;
+        
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-2 min-w-[150px]">
+            {isUpdating && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+            
+            {canPrescribe && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPrescriptionAppointmentId(appointment.id)}
+                disabled={isUpdating}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Prescribe
+              </Button>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
+                <Button variant="ghost" className="h-8 w-8 p-0" disabled={isUpdating}>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -61,36 +77,25 @@ const DoctorAppointmentsTable = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => statusMutation.mutate({ id: appointment.id, status: "INPROGRESS" })}
-                  disabled={appointment.status !== "SCHEDULED"}
+                  disabled={appointment.status !== "SCHEDULED" || isUpdating}
                 >
                   Mark as In-Progress
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => statusMutation.mutate({ id: appointment.id, status: "COMPLETED" })}
-                  disabled={appointment.status === "COMPLETED" || appointment.status === "CANCELED"}
+                  disabled={appointment.status === "COMPLETED" || appointment.status === "CANCELED" || isUpdating}
                 >
                   Mark as Completed
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-destructive"
                   onClick={() => statusMutation.mutate({ id: appointment.id, status: "CANCELED" })}
-                  disabled={appointment.status === "COMPLETED" || appointment.status === "CANCELED"}
+                  disabled={appointment.status === "COMPLETED" || appointment.status === "CANCELED" || isUpdating}
                 >
                   Cancel Appointment
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {canPrescribe && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPrescriptionAppointmentId(appointment.id)}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Prescribe
-              </Button>
-            )}
           </div>
         );
       },

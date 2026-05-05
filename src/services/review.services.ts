@@ -29,3 +29,11 @@ export const getAllReviews = async () => {
     throw error;
   }
 };
+export const updateReview = async (id: string, payload: Partial<TCreateReviewPayload>) => {
+  try {
+    return await httpClient.patch<TReview>(`/reviews/${id}`, payload);
+  } catch (error) {
+    console.log("Error updating review:", error);
+    throw error;
+  }
+};

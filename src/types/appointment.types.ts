@@ -37,6 +37,14 @@ export type TAppointmentPayment = {
   invoiceUrl?: string | null;
 };
 
+export type TReview = {
+  id: string;
+  rating: number;
+  comment?: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+};
+
 export type TAppointment = {
   id: string;
   doctorId?: string;
@@ -51,6 +59,8 @@ export type TAppointment = {
   patient?: TAppointmentPatient | null;
   schedule?: TAppointmentSchedule | null;
   payment?: TAppointmentPayment | null;
+  review?: TReview | null;
+  prescription?: TPrescription | null;
 };
 
 export type TBookAppointmentPayload = {

@@ -70,4 +70,37 @@ export const doctorAppointmentsColumns: ColumnDef<TAppointment>[] = [
       );
     },
   },
+  {
+    id: "review",
+    header: "Rating",
+    cell: ({ row }) => {
+      const review = row.original.review;
+      if (!review) return <span className="text-muted-foreground text-xs italic">No rating</span>;
+      
+      return (
+        <div className="flex items-center gap-1" title={review.comment || ""}>
+          <div className="flex">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <svg
+                key={star}
+                className={`h-3 w-3 ${
+                  star <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30"
+                }`}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            ))}
+          </div>
+          <span className="text-xs font-medium">{review.rating.toFixed(1)}</span>
+        </div>
+      );
+    },
+  },
 ];

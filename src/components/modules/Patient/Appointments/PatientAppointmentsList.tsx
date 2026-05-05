@@ -28,6 +28,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import ViewPrescriptionModal from "./ViewPrescriptionModal";
 import CreateReviewModal from "./CreateReviewModal";
+import { cn } from "@/lib/utils";
 
 interface PatientAppointmentsListProps {
   appointments: TAppointment[];
@@ -148,7 +149,7 @@ const PatientAppointmentsList = ({
               appointment.paymentStatus !== "PAID" &&
               appointment.status !== "CANCELED";
 
-            const hasPrescription = appointment.status === "COMPLETED"; // Prescriptions are usually added when status is COMPLETED
+            const hasPrescription = !!appointment.prescription;
             const canReview = appointment.status === "COMPLETED" && appointment.paymentStatus === "PAID";
 
             return (
@@ -220,6 +221,37 @@ const PatientAppointmentsList = ({
                       {appointment.id}
                     </span>
                   </div>
+
+                  {appointment.review && (
+                    <div className="rounded-2xl border border-yellow-200 bg-yellow-50/50 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={cn(
+                                "size-4",
+                                star <= (appointment.review?.rating || 0)
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-muted-foreground/30"
+                              )}
+                            />
+                          ))}
+                          <span className="ml-2 font-medium text-yellow-700">
+                            {appointment.review.rating.toFixed(1)}
+                          </span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDateTime(appointment.review.createdAt)}
+                        </span>
+                      </div>
+                      {appointment.review.comment && (
+                        <p className="text-sm italic text-muted-foreground">
+                          "{appointment.review.comment}"
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
 
                 <CardFooter className="flex-wrap justify-between gap-3">
@@ -249,11 +281,21 @@ const PatientAppointmentsList = ({
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className="text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+                        className={cn(
+                          "transition-colors",
+                          appointment.review 
+                            ? "text-blue-600 border-blue-200 hover:bg-blue-50"
+                            : "text-yellow-600 border-yellow-200 hover:bg-yellow-50"
+                        )}
                         onClick={() => setReviewId(appointment.id)}
                       >
-                        <Star className="mr-2 h-4 w-4 fill-yellow-600" />
-                        Rate Doctor
+                        <Star 
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            appointment.review ? "fill-blue-600" : "fill-yellow-600"
+                          )} 
+                        />
+                        {appointment.review ? "Edit Review" : "Rate Doctor"}
                       </Button>
                     )}
 
@@ -292,6 +334,7 @@ const PatientAppointmentsList = ({
 
       <CreateReviewModal 
         appointmentId={reviewId}
+        initialReview={appointments.find(a => a.id === reviewId)?.review}
         open={!!reviewId}
         onOpenChange={(open) => !open && setReviewId(null)}
       />
