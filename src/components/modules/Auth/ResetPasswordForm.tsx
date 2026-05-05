@@ -89,7 +89,7 @@ const ResetPasswordForm = () => {
           </CardHeader>
           <CardContent className="pb-8 text-center">
             <p className="text-sm text-muted-foreground mb-6">
-              You will be redirected to the login page in a few seconds...
+              You will be redirected to the dashboard in a few seconds...
             </p>
             <Link href="/">
               <Button className="w-full h-11 text-base font-semibold">

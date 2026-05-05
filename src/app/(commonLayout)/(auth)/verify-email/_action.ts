@@ -3,6 +3,8 @@
 import { httpClient } from "@/lib/axios/httpClient";
 import { ApiErrorResponse, ApiResponse } from "@/types/api.types";
 
+import { setTokenInCookies } from "@/lib/tokenUtils";
+
 export type TVerifyEmailPayload = {
   email: string;
   otp: string;
@@ -16,6 +18,14 @@ export const handleVerifyEmail = async (
       "/auth/verify-email",
       payload,
     );
+
+    if (response.success && response.data) {
+      const { accessToken, refreshToken, token } = response.data;
+      
+      if (accessToken) await setTokenInCookies("accessToken", accessToken);
+      if (refreshToken) await setTokenInCookies("refreshToken", refreshToken);
+      if (token) await setTokenInCookies("better-auth.session_token", token, 86400);
+    }
 
     return response;
   } catch (error: any) {

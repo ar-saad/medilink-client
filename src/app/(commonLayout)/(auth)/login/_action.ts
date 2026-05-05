@@ -36,9 +36,9 @@ export const userLogin = async (
     const { token, accessToken, refreshToken, user } = response.data;
     const { role, emailVerified, needPasswordChange, email } = user;
 
-    await setTokenInCookies("accessToken", accessToken);
-    await setTokenInCookies("refreshToken", refreshToken);
-    await setTokenInCookies("better-auth.session_token", token, 86400); // 1 day in seconds
+    if (accessToken) await setTokenInCookies("accessToken", accessToken);
+    if (refreshToken) await setTokenInCookies("refreshToken", refreshToken);
+    if (token) await setTokenInCookies("better-auth.session_token", token, 86400);
 
     // Implement in the catch block
     // if (!emailVerified) {
@@ -78,7 +78,11 @@ export const userLogin = async (
 
     return {
       success: false,
-      message: `Login failed: ${error.message || "Unknown error"}`,
+      message:
+        error.response?.data?.message ||
+        error.message ||
+        "An unexpected error occurred during login",
     };
   }
 };
+
