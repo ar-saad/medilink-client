@@ -1,3 +1,5 @@
+import { TPrescription } from "./prescription.types";
+
 export type AppointmentStatus =
   | "SCHEDULED"
   | "INPROGRESS"
