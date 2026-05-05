@@ -216,18 +216,18 @@ const LoginForm = ({ redirectPath }: LoginFormProps) => {
               {[
                 {
                   label: "Admin",
-                  email: "admin@medilink.com",
-                  pass: "admin123",
+                  email: "arsaad.dev@gmail.com",
+                  pass: "superadminpassword",
                 },
                 {
                   label: "Doctor",
-                  email: "doctor@medilink.com",
-                  pass: "doctor123",
+                  email: "arsaad00.official@gmail.com",
+                  pass: "doctorpassword1234",
                 },
                 {
                   label: "Patient",
-                  email: "patient@medilink.com",
-                  pass: "patient123",
+                  email: "arsaad.2016@gmail.com",
+                  pass: "patientpassword1234",
                 },
               ].map((demo) => (
                 <Button

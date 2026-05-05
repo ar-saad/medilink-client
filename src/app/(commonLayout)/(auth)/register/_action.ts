@@ -33,7 +33,7 @@ export const userRegister = async (
     await setTokenInCookies("refreshToken", refreshToken);
     await setTokenInCookies("better-auth.session_token", token, 86400); // 1 day in seconds
 
-    redirect("/login"); // Or maybe auto login and redirect to dashboard
+    redirect(`/verify-email?email=${payload.email}`);
   } catch (error: any) {
     if (
       error &&

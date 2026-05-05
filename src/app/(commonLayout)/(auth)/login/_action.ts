@@ -46,6 +46,8 @@ export const userLogin = async (
     // } else
 
     if (needPasswordChange) {
+      // Trigger OTP sending for password reset
+      await httpClient.post("/auth/forget-password", { email });
       redirect(`/reset-password?email=${email}`);
     } else {
       const targetPath =
@@ -71,7 +73,7 @@ export const userLogin = async (
       error.response &&
       error.response.data.message === "Email not verified"
     ) {
-      redirect("/verify-email");
+      redirect(`/verify-email?email=${payload.email}`);
     }
 
     return {

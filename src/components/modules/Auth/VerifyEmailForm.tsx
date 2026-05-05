@@ -1,6 +1,6 @@
 "use client";
 
-import { handleResetPassword } from "@/app/(commonLayout)/(auth)/reset-password/_action";
+import { handleResendOTP, handleVerifyEmail } from "@/app/(commonLayout)/(auth)/verify-email/_action";
 import AppField from "@/components/shared/form/AppField";
 import AppSubmitButton from "@/components/shared/form/AppSubmitButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -9,68 +9,104 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
 } from "@/components/ui/card";
-import { resetPasswordSchema, TResetPasswordPayload } from "@/zod/auth.validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { Lock, Mail, KeyRound, Eye, EyeOff, ArrowLeft, CheckCircle2, LayoutDashboard } from "lucide-react";
+import { KeyRound, Mail, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { useUser } from "@/providers/UserProvider";
-import { getDefaultDashboardRoute } from "@/lib/authUtils";
 
-const ResetPasswordForm = () => {
+const VerifyEmailForm = () => {
   const [serverError, setServerError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const router = useRouter();
   const searchParams = useSearchParams();
   const emailFromQuery = searchParams.get("email") || "";
-  const { refetch } = useUser();
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    let timer: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      timer = setInterval(() => {
+        setResendCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: (payload: TResetPasswordPayload) => handleResetPassword(payload),
+  const { mutateAsync: verifyEmail, isPending: isVerifying } = useMutation({
+    mutationFn: handleVerifyEmail,
+  });
+
+  const { mutateAsync: resendOTP, isPending: isResending } = useMutation({
+    mutationFn: handleResendOTP,
   });
 
   const form = useForm({
     defaultValues: {
       email: emailFromQuery,
       otp: "",
-      newPassword: "",
     },
     onSubmit: async ({ value }) => {
       setServerError(null);
 
       try {
-        const result = await mutateAsync(value);
+        const result = await verifyEmail(value);
 
-        if (!result.success) {
-          setServerError(result.message || "Failed to reset password.");
+        if (!result || !result.success) {
+          setServerError(result?.message || "Verification failed.");
           return;
         }
 
         setIsSuccess(true);
-        toast.success("Password reset successfully.");
-        refetch();
+        toast.success("Email verified successfully!");
         setTimeout(() => {
-          const dashboardRoute = result.data?.role ? getDefaultDashboardRoute(result.data.role) : "/dashboard";
-          router.push(dashboardRoute);
+          router.push("/login");
         }, 3000);
       } catch (error: any) {
-        console.error("Reset password error:", error);
+        console.error("Verification error:", error);
         setServerError(error.message || "An unexpected error occurred.");
       }
     },
   });
+
+  // Sync email from query params if it changes
+  useEffect(() => {
+    if (emailFromQuery) {
+      form.setFieldValue("email", emailFromQuery);
+    }
+  }, [emailFromQuery, form]);
+
+  const handleResend = async () => {
+    const email = form.getFieldValue("email");
+    
+    if (!email) {
+      toast.error("Please enter your email address to resend the code.");
+      setServerError("Email is required to resend verification code.");
+      return;
+    }
+
+    if (resendCooldown > 0 || isResending) return;
+
+    try {
+      const result = await resendOTP(email);
+      if (result && result.success) {
+        toast.success("New OTP sent to your email.");
+        setResendCooldown(60); // 1 minute cooldown
+        setServerError(null);
+      } else {
+        toast.error(result?.message || "Failed to resend OTP.");
+        setServerError(result?.message || "Failed to resend OTP.");
+      }
+    } catch (error: any) {
+      toast.error("An error occurred while resending OTP.");
+    }
+  };
 
   if (isSuccess) {
     return (
@@ -82,18 +118,18 @@ const ResetPasswordForm = () => {
                 <CheckCircle2 className="size-10 text-primary" />
               </div>
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight">Success!</CardTitle>
-            <CardDescription className="text-base pt-2">
-              Your password has been reset successfully.
+            <CardTitle className="text-3xl font-bold tracking-tight text-primary">Email Verified!</CardTitle>
+            <CardDescription className="text-base pt-2 font-medium">
+              Your account is now active and ready to use.
             </CardDescription>
           </CardHeader>
-          <CardContent className="pb-8 text-center">
+          <CardContent className="pb-8">
             <p className="text-sm text-muted-foreground mb-6">
               You will be redirected to the login page in a few seconds...
             </p>
-            <Link href="/">
-              <Button className="w-full h-11 text-base font-semibold">
-                Go to Dashboard
+            <Link href="/login">
+              <Button className="w-full h-11 text-base font-semibold transition-all hover:scale-[1.02]">
+                Go to Login
               </Button>
             </Link>
           </CardContent>
@@ -104,11 +140,11 @@ const ResetPasswordForm = () => {
 
   return (
     <div className="w-full max-w-md animate-in fade-in zoom-in duration-500">
-      <Card className="border-none shadow-2xl bg-background/80 backdrop-blur-sm">
-        <CardHeader className="space-y-1 pb-6 text-center">
-          <CardTitle className="text-3xl font-bold tracking-tight">Reset password</CardTitle>
+      <Card className="border-none shadow-2xl bg-background/80 backdrop-blur-sm border-t-4 border-t-primary">
+        <CardHeader className="space-y-2 pb-6 text-center">
+          <CardTitle className="text-3xl font-bold tracking-tight">Verify your email</CardTitle>
           <CardDescription className="text-base">
-            Enter the OTP sent to your email and your new password.
+            We've sent a 6-digit verification code to <span className="font-semibold text-foreground">{emailFromQuery || "your email"}</span>.
           </CardDescription>
         </CardHeader>
 
@@ -123,7 +159,9 @@ const ResetPasswordForm = () => {
           >
             <form.Field
               name="email"
-              validators={{ onChange: resetPasswordSchema.shape.email }}
+              validators={{
+                onChange: ({ value }) => !value ? "Email is required" : undefined
+              }}
             >
               {(field) => (
                 <AppField
@@ -139,45 +177,22 @@ const ResetPasswordForm = () => {
 
             <form.Field
               name="otp"
-              validators={{ onChange: resetPasswordSchema.shape.otp }}
+              validators={{
+                onChange: ({ value }) => {
+                  if (!value) return "OTP is required";
+                  if (value.length !== 6) return "OTP must be 6 digits";
+                  return undefined;
+                }
+              }}
             >
               {(field) => (
                 <AppField
                   field={field}
-                  label="OTP"
+                  label="Verification Code"
                   type="text"
                   placeholder="123456"
+                  maxLength={6}
                   prepend={<KeyRound className="size-4 text-muted-foreground" />}
-                />
-              )}
-            </form.Field>
-
-            <form.Field
-              name="newPassword"
-              validators={{ onChange: resetPasswordSchema.shape.newPassword }}
-            >
-              {(field) => (
-                <AppField
-                  field={field}
-                  label="New Password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  prepend={<Lock className="size-4 text-muted-foreground" />}
-                  append={
-                    <Button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 hover:bg-transparent"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="size-4 text-muted-foreground" />
-                      ) : (
-                        <Eye className="size-4 text-muted-foreground" />
-                      )}
-                    </Button>
-                  }
                 />
               )}
             </form.Field>
@@ -191,16 +206,33 @@ const ResetPasswordForm = () => {
             <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting] as const}>
               {([canSubmit, isSubmitting]) => (
                 <AppSubmitButton
-                  isPending={isSubmitting || isPending}
+                  isPending={isSubmitting || isVerifying}
                   disabled={!canSubmit}
-                  pendingLabel="Resetting..."
+                  pendingLabel="Verifying..."
                   className="w-full h-11 text-base font-semibold transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Reset Password
+                  Verify Email
                 </AppSubmitButton>
               )}
             </form.Subscribe>
           </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Didn't receive the code?{" "}
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendCooldown > 0 || isResending}
+                className="text-primary font-bold hover:underline disabled:opacity-50 disabled:no-underline transition-all flex items-center gap-1 mx-auto mt-1"
+              >
+                {isResending ? (
+                  <RefreshCw className="size-3 animate-spin" />
+                ) : null}
+                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend code"}
+              </button>
+            </p>
+          </div>
         </CardContent>
 
         <CardFooter className="flex justify-center border-t bg-muted/30 py-4 rounded-b-lg">
@@ -217,4 +249,4 @@ const ResetPasswordForm = () => {
   );
 };
 
-export default ResetPasswordForm;
+export default VerifyEmailForm;

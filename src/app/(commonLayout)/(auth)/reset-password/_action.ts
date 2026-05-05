@@ -1,6 +1,7 @@
 "use server";
 
 import { resetPassword } from "@/services/auth.services";
+import { setTokenInCookies } from "@/lib/tokenUtils";
 import { resetPasswordSchema, TResetPasswordPayload } from "@/zod/auth.validation";
 
 export const handleResetPassword = async (payload: TResetPasswordPayload) => {
@@ -15,6 +16,21 @@ export const handleResetPassword = async (payload: TResetPasswordPayload) => {
 
   try {
     const result = await resetPassword(parsedPayload.data);
+    
+    if (result.success) {
+      const { token, accessToken, refreshToken, user } = result.data;
+      
+      await setTokenInCookies("accessToken", accessToken);
+      await setTokenInCookies("refreshToken", refreshToken);
+      await setTokenInCookies("better-auth.session_token", token, 86400);
+      
+      return {
+        success: true,
+        message: result.message,
+        data: user
+      };
+    }
+    
     return result;
   } catch (error: any) {
     return {

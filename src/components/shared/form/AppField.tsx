@@ -25,6 +25,7 @@ type AppFieldProps = {
   prepend?: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  maxLength?: number;
 };
 
 const AppField = ({
@@ -36,6 +37,7 @@ const AppField = ({
   prepend,
   className,
   disabled = false,
+  maxLength,
 }: AppFieldProps) => {
   const firstError =
     field.state.meta.isTouched && field.state.meta.errors.length > 0
@@ -71,6 +73,7 @@ const AppField = ({
           onBlur={field.handleBlur}
           onChange={(e) => field.handleChange(e.target.value)}
           disabled={disabled}
+          maxLength={maxLength}
           aria-invalid={hasError}
           aria-describedby={hasError ? `${field.name}-error` : undefined}
           className={cn(
@@ -85,17 +88,17 @@ const AppField = ({
             {append}
           </div>
         )}
-
-        {hasError && (
-          <p
-            id={`${field.name}-error`}
-            role="alert"
-            className="text-sm text-destructive"
-          >
-            {firstError}
-          </p>
-        )}
       </div>
+
+      {hasError && (
+        <p
+          id={`${field.name}-error`}
+          role="alert"
+          className="text-sm text-destructive"
+        >
+          {firstError}
+        </p>
+      )}
     </div>
   );
 };

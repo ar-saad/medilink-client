@@ -130,11 +130,11 @@ const CreateSpecialtyFormModal = ({
                         <span className="text-xs">Upload Icon</span>
                       </div>
                     )}
-                    <Input
+                    <input
                       id={field.name}
                       type="file"
                       accept="image/*"
-                      className="absolute inset-0 cursor-pointer opacity-0"
+                      className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                       onChange={(e) => handleFileChange(e, field.handleChange)}
                     />
                   </div>
