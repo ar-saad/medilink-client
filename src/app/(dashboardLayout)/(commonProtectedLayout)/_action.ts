@@ -22,3 +22,15 @@ export const logoutUserAction = async (): Promise<
     };
   }
 };
+
+export const changePasswordAction = async (payload: any) => {
+  try {
+    const { changePassword } = await import("@/services/auth.services");
+    return await changePassword(payload);
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to change password",
+    };
+  }
+};

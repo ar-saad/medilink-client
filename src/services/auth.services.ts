@@ -126,3 +126,67 @@ export async function logoutUserFromCurrentSession() {
     data: null,
   };
 }
+
+export async function forgetPassword(email: string) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/forget-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in forgetPassword:", error);
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function resetPassword(payload: any) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in resetPassword:", error);
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
+
+export async function changePassword(payload: any) {
+  try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+
+    const res = await fetch(`${API_BASE_URL}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: `better-auth.session_token=${sessionToken}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error in changePassword:", error);
+    return {
+      success: false,
+      message: "Something went wrong",
+    };
+  }
+}
