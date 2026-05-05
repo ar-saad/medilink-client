@@ -8,6 +8,7 @@ import { updateAdminProfile, updateDoctorProfile, updatePatientProfile } from "@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, User, Camera } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,6 +19,7 @@ interface ProfileFormProps {
 
 const ProfileForm = ({ user }: ProfileFormProps) => {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const role = user.role;
   const profile = role === "PATIENT" ? user.patient : role === "DOCTOR" ? user.doctor : user.admin;
   const [preview, setPreview] = useState<string | null>(profile?.profilePhoto || user.image || null);
@@ -40,6 +42,7 @@ const ProfileForm = ({ user }: ProfileFormProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+      router.refresh();
       toast.success("Profile updated successfully");
     },
     onError: (error: any) => {
@@ -54,7 +57,7 @@ const ProfileForm = ({ user }: ProfileFormProps) => {
       address: profile?.address || "",
       // Doctor specific
       designation: profile?.designation || "",
-      qualifications: profile?.qualifications || "",
+      qualification: profile?.qualification || "",
       currentWorkingPlace: profile?.currentWorkingPlace || "",
       appointmentFee: profile?.appointmentFee || 0,
       file: null as File | null,
@@ -68,7 +71,7 @@ const ProfileForm = ({ user }: ProfileFormProps) => {
 
       if (role === "DOCTOR") {
         payload.designation = value.designation;
-        payload.qualifications = value.qualifications;
+        payload.qualification = value.qualification;
         payload.currentWorkingPlace = value.currentWorkingPlace;
         payload.appointmentFee = Number(value.appointmentFee);
       }
@@ -211,7 +214,7 @@ const ProfileForm = ({ user }: ProfileFormProps) => {
             </form.Field>
 
             {role === "DOCTOR" && (
-              <form.Field name="qualifications">
+              <form.Field name="qualification">
                 {(field) => (
                   <div className="col-span-1 md:col-span-2 space-y-1.5">
                     <Label htmlFor={field.name}>Qualifications</Label>

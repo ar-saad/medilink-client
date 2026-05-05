@@ -66,6 +66,9 @@ export async function getUserInfo() {
         "Content-Type": "application/json",
         Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
+      next: {
+        tags: ["user"],
+      },
     });
 
     if (!res.ok) {
