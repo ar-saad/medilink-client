@@ -108,7 +108,7 @@ const TopDoctorsSection = () => {
                     variant="default"
                     asChild
                   >
-                    <Link href={`/consultation/${doctor.id}`}>
+                    <Link href={`/consultation/doctor/${doctor.id}`}>
                       View Profile
                     </Link>
                   </Button>

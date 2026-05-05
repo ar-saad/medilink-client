@@ -140,7 +140,7 @@ const BookAppointmentModal = ({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-2xl">
+      <DialogContent className="max-h-[90vh] overflow-hidden p-0 sm:max-w-2xl gap-0">
         <DialogHeader className="border-b px-6 py-5 pr-14">
           <DialogTitle>Book Appointment</DialogTitle>
           <DialogDescription>

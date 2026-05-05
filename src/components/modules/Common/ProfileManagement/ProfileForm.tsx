@@ -42,6 +42,7 @@ const ProfileForm = ({ user }: ProfileFormProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-profile"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       router.refresh();
       toast.success("Profile updated successfully");
     },
